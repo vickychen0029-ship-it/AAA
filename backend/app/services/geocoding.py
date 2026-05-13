@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 
 @dataclass(slots=True)
@@ -9,87 +12,66 @@ class GeocodeResult:
     query: str
     lat: float
     lng: float
-    iana_tz: Optional[str]
+    iana_tz: str | None
     provider: str
 
 
-_MOCK_GEO_DATA = {
-    "new york": GeocodeResult(
-        query="New York",
-        lat=40.7128,
-        lng=-74.0060,
-        iana_tz="America/New_York",
-        provider="mock",
-    ),
-    "london": GeocodeResult(
-        query="London",
-        lat=51.5072,
-        lng=-0.1276,
-        iana_tz="Europe/London",
-        provider="mock",
-    ),
-    "shanghai": GeocodeResult(
-        query="Shanghai",
-        lat=31.2304,
-        lng=121.4737,
-        iana_tz="Asia/Shanghai",
-        provider="mock",
-    ),
-}
-
-
 def geocode_location(query: str) -> GeocodeResult:
-    """
-    Resolve a place string using a provider chain:
-    1) Open-Meteo geocoding (primary)
-    2) Nominatim (fallback)
-
-    External network calls are intentionally mocked for now.
-    """
-    normalized = query.strip().lower()
-    if not normalized:
+    text = (query or "").strip()
+    if not text:
         raise ValueError("location query cannot be empty")
 
-    result = _geocode_open_meteo(normalized)
+    result = _geocode_open_meteo(text)
     if result is not None:
         return result
-
-    fallback = _geocode_nominatim(normalized)
-    if fallback is not None:
-        return fallback
 
     raise ValueError(f"unable to geocode location: {query}")
 
 
-def _geocode_open_meteo(normalized_query: str) -> Optional[GeocodeResult]:
-    # TODO: replace with real Open-Meteo geocoding API call and parsing.
-    # Mock behavior: only return data for a known subset.
-    if normalized_query in _MOCK_GEO_DATA:
-        known = _MOCK_GEO_DATA[normalized_query]
-        return GeocodeResult(
-            query=known.query,
-            lat=known.lat,
-            lng=known.lng,
-            iana_tz=known.iana_tz,
-            provider="open-meteo",
-        )
-    return None
+def _geocode_open_meteo(query: str) -> GeocodeResult | None:
+    params = urlencode(
+        {
+            "name": query,
+            "count": 1,
+            "language": "zh",
+            "format": "json",
+        }
+    )
+    url = f"https://geocoding-api.open-meteo.com/v1/search?{params}"
+    req = Request(url=url, headers={"User-Agent": "smweb/1.0"}, method="GET")
 
-
-def _geocode_nominatim(normalized_query: str) -> Optional[GeocodeResult]:
-    # TODO: replace with real Nominatim geocoding API fallback and parsing.
-    # Mock behavior: deterministically infer pseudo coordinates when primary misses.
-    if not normalized_query:
+    try:
+        with urlopen(req, timeout=10) as response:
+            raw = response.read().decode("utf-8")
+    except Exception:
         return None
 
-    seed = sum(ord(c) for c in normalized_query)
-    lat = ((seed % 18000) / 100.0) - 90.0
-    lng = ((seed * 7 % 36000) / 100.0) - 180.0
+    try:
+        payload: dict[str, Any] = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+
+    results = payload.get("results")
+    if not isinstance(results, list) or not results:
+        return None
+
+    hit = results[0]
+    try:
+        lat = float(hit.get("latitude"))
+        lng = float(hit.get("longitude"))
+    except (TypeError, ValueError):
+        return None
+
+    tz = hit.get("timezone")
+    iana_tz = tz.strip() if isinstance(tz, str) and tz.strip() else None
+
+    name = hit.get("name")
+    resolved_query = name.strip() if isinstance(name, str) and name.strip() else query
 
     return GeocodeResult(
-        query=normalized_query,
-        lat=round(lat, 6),
-        lng=round(lng, 6),
-        iana_tz=None,
-        provider="nominatim",
+        query=resolved_query,
+        lat=lat,
+        lng=lng,
+        iana_tz=iana_tz,
+        provider="open-meteo",
     )

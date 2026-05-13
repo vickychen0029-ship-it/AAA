@@ -96,7 +96,10 @@ export default function Zodiac() {
 
     const location = resolveBirthLocation(profile, y, m, d, h, min)
     const { lat, lng } = location
-    const { jd } = birthTimeToJulianDay(profile, location, y, m, d, h, min)
+    const utcFromProfileMs = chartGeo?.birthUtc ? Date.parse(chartGeo.birthUtc) : NaN
+    const jd = Number.isFinite(utcFromProfileMs)
+      ? (utcFromProfileMs / 86400000 + 2440587.5)
+      : birthTimeToJulianDay(profile, location, y, m, d, h, min).jd
 
     // Compute ASC separately
     const ascLon = ascendant(jd, lat, lng)
@@ -116,7 +119,7 @@ export default function Zodiac() {
         desc: def.descTemplate(sign),
       }
     })
-  }, [hasProfile, profile])
+  }, [hasProfile, profile, chartGeo?.birthUtc])
 
   const backendSyncKey = useMemo(() => {
     if (!canSyncBackendChart) return ''
