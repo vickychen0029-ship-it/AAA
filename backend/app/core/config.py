@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 from typing import Any
 
@@ -57,11 +58,8 @@ class Settings(BaseSettings):
 
     @property
     def effective_database_url(self) -> str:
-        if (
-            self.APP_ENV.lower() == "production"
-            and self.is_sqlite
-            and "/tmp/" not in self.DATABASE_URL
-        ):
+        is_vercel_runtime = os.getenv("VERCEL") == "1"
+        if is_vercel_runtime and self.is_sqlite and "/tmp/" not in self.DATABASE_URL:
             return "sqlite:////tmp/smweb.db"
         return self.DATABASE_URL
 

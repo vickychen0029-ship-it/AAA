@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,6 +17,8 @@ from app.db.base import Base
 from app.db.session import engine
 import app.models  # noqa: F401
 from app.schemas.common import HealthResponse
+
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -42,7 +46,10 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     def create_tables_if_missing() -> None:
-        Base.metadata.create_all(bind=engine)
+        try:
+            Base.metadata.create_all(bind=engine)
+        except Exception:
+            logger.exception("Failed to initialize database schema on startup")
 
     @app.get("/", response_model=HealthResponse, tags=["system"])
     def root() -> HealthResponse:
