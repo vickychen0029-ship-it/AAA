@@ -28,6 +28,26 @@ def get_current_user(db: DBSession = Depends(get_db), token: str = Depends(oauth
         raise credentials_exception
 
     user = db.scalar(select(User).where(User.id == subject))
+    if user is None:
+        # On stateless/ephemeral runtimes (e.g. serverless sqlite), token may outlive user row.
+        # Try self-healing from token claims before rejecting.
+        phone = payload.get("phone")
+        if isinstance(phone, str) and phone.strip():
+            existing_by_phone = db.scalar(select(User).where(User.email == phone.strip()))
+            if existing_by_phone is not None:
+                user = existing_by_phone
+            else:
+                user = User(
+                    id=str(subject),
+                    email=phone.strip(),
+                    username=payload.get("username") if isinstance(payload.get("username"), str) else None,
+                    hashed_password="__external_jwt_only__",
+                    is_active=True,
+                    is_superuser=bool(payload.get("is_superuser")),
+                )
+                db.add(user)
+                db.commit()
+                db.refresh(user)
 
     if user is None:
         raise credentials_exception

@@ -18,6 +18,14 @@ async function parseResponse(response) {
     }
   }
   if (!response.ok) {
+    if (response.status === 401) {
+      try {
+        localStorage.removeItem(TOKEN_KEY)
+      } catch {
+        // ignore storage failure
+      }
+      throw new Error('登录已失效，请重新登录后再试')
+    }
     const detail = data?.detail || `请求失败：${response.status}`
     throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
   }

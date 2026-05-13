@@ -54,7 +54,14 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="inactive user")
 
-    token = create_access_token(subject=user.id)
+    token = create_access_token(
+        subject=user.id,
+        extra_claims={
+            "phone": user.email,
+            "username": user.username,
+            "is_superuser": bool(user.is_superuser),
+        },
+    )
     return Token(access_token=token)
 
 
