@@ -51,6 +51,11 @@ function profileHasRequiredFields(profile) {
   )
 }
 
+function isDraftProfileId(id) {
+  const value = String(id || '')
+  return value === 'draft-empty' || value.startsWith('draft-')
+}
+
 export function ProfileProvider({ children }) {
   const { token, isAuthenticated } = useAuth()
   const [state, setState] = useState({
@@ -125,13 +130,42 @@ export function ProfileProvider({ children }) {
     }
     const merged = { ...current, ...updates }
     const payload = mapUiProfileToUpdatePayload(merged)
-    const updated = await updateProfileApi(current.id, payload)
-    const mapped = mapBackendProfileToUi(updated)
-    setState((prev) => ({
-      ...prev,
-      profiles: prev.profiles.map((p) => (p.id === current.id ? mapped : p)),
-    }))
-    return mapped.id
+
+    // Draft profile has no backend record yet, so it must be created first.
+    if (isDraftProfileId(current.id)) {
+      const created = await createProfileApi(payload)
+      const mappedCreated = mapBackendProfileToUi(created)
+      setState((prev) => ({
+        ...prev,
+        profiles: prev.profiles.map((p) => (p.id === current.id ? mappedCreated : p)),
+        currentProfileId: mappedCreated.id,
+      }))
+      return mappedCreated.id
+    }
+
+    try {
+      const updated = await updateProfileApi(current.id, payload)
+      const mapped = mapBackendProfileToUi(updated)
+      setState((prev) => ({
+        ...prev,
+        profiles: prev.profiles.map((p) => (p.id === current.id ? mapped : p)),
+      }))
+      return mapped.id
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      // If record vanished (e.g. serverless ephemeral DB), recover by creating a new one.
+      if (/404|not found|profile not found/i.test(message)) {
+        const created = await createProfileApi(payload)
+        const mappedCreated = mapBackendProfileToUi(created)
+        setState((prev) => ({
+          ...prev,
+          profiles: prev.profiles.map((p) => (p.id === current.id ? mappedCreated : p)),
+          currentProfileId: mappedCreated.id,
+        }))
+        return mappedCreated.id
+      }
+      throw err
+    }
   }
 
   const addProfile = async (newProfile) => {
