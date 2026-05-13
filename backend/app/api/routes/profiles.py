@@ -162,7 +162,29 @@ def update_profile(
 ) -> ProfileResponse:
     profile = db.scalar(select(Profile).where(Profile.id == id, Profile.user_id == current_user.id))
     if profile is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"profile not found: {id}")
+        data = payload.model_dump(exclude_unset=True)
+        required_fields = ["name", "location_query", "birth_local_dt"]
+        missing = [field for field in required_fields if not data.get(field)]
+        if missing:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"profile not found and missing required fields for auto-create: {', '.join(missing)}",
+            )
+
+        create_payload = ProfileCreateRequest(
+            name=str(data["name"]),
+            gender=data.get("gender"),
+            location_query=str(data["location_query"]),
+            current_place=data.get("current_place"),
+            birth_local_dt=data["birth_local_dt"],
+            dst_auto=data.get("dst_auto", True),
+            dst_applied=data.get("dst_applied"),
+            iana_tz=data.get("iana_tz"),
+            lat=data.get("lat"),
+            lng=data.get("lng"),
+        )
+        # Auto-recover when record is missing (common in ephemeral runtimes).
+        return create_profile(payload=create_payload, db=db, current_user=current_user)
 
     data = payload.model_dump(exclude_unset=True)
 
