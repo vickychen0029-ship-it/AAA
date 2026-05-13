@@ -2,6 +2,15 @@ import { getApiBaseUrl } from './api.js'
 
 const TOKEN_KEY = 'smweb_access_token'
 
+function parseMaybeJson(text) {
+  if (!text) return null
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
 export function getStoredToken() {
   return localStorage.getItem(TOKEN_KEY) || ''
 }
@@ -29,9 +38,9 @@ export async function loginWithPhone(phone, password) {
   })
 
   const text = await response.text()
-  const data = text ? JSON.parse(text) : null
+  const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || `登录失败：${response.status}`
+    const detail = data?.detail || text || `登录失败：${response.status}`
     throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
   }
 
@@ -58,9 +67,9 @@ export async function registerWithPhone(phone, password, username = null) {
   })
 
   const text = await response.text()
-  const data = text ? JSON.parse(text) : null
+  const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || `注册失败：${response.status}`
+    const detail = data?.detail || text || `注册失败：${response.status}`
     throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
   }
 
@@ -76,9 +85,9 @@ export async function fetchMe(token = getStoredToken()) {
     },
   })
   const text = await response.text()
-  const data = text ? JSON.parse(text) : null
+  const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || `获取用户信息失败：${response.status}`
+    const detail = data?.detail || text || `获取用户信息失败：${response.status}`
     throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
   }
   return data

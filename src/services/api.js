@@ -6,7 +6,17 @@ const TOKEN_KEY = 'smweb_access_token'
 
 async function parseResponse(response) {
   const text = await response.text()
-  const data = text ? JSON.parse(text) : null
+  let data = null
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      if (!response.ok) {
+        throw new Error(text.trim() || `请求失败：${response.status}`)
+      }
+      throw new Error('服务返回了非 JSON 响应')
+    }
+  }
   if (!response.ok) {
     const detail = data?.detail || `请求失败：${response.status}`
     throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))

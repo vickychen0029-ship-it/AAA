@@ -11,7 +11,7 @@ engine_kwargs: dict[str, object] = {"pool_pre_ping": True}
 if settings.is_sqlite:
     engine_kwargs["connect_args"] = {"check_same_thread": False}
 
-engine = create_engine(settings.DATABASE_URL, **engine_kwargs)
+engine = create_engine(settings.effective_database_url, **engine_kwargs)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 
 

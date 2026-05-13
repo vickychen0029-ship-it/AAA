@@ -55,6 +55,16 @@ class Settings(BaseSettings):
     def is_sqlite(self) -> bool:
         return self.DATABASE_URL.startswith("sqlite")
 
+    @property
+    def effective_database_url(self) -> str:
+        if (
+            self.APP_ENV.lower() == "production"
+            and self.is_sqlite
+            and "/tmp/" not in self.DATABASE_URL
+        ):
+            return "sqlite:////tmp/smweb.db"
+        return self.DATABASE_URL
+
 
 @lru_cache
 def get_settings() -> Settings:
