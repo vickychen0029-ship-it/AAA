@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+app/main.py
+smweb_backend.egg-info/PKG-INFO
+smweb_backend.egg-info/SOURCES.txt
+smweb_backend.egg-info/dependency_links.txt
+smweb_backend.egg-info/requires.txt
+smweb_backend.egg-info/top_level.txt

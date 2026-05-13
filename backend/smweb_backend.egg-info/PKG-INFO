@@ -1,0 +1,86 @@
+Metadata-Version: 2.4
+Name: smweb-backend
+Version: 0.1.0
+Summary: FastAPI backend for smweb
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0.0,>=0.115.0
+Requires-Dist: uvicorn[standard]<1.0.0,>=0.30.0
+Requires-Dist: sqlalchemy<3.0.0,>=2.0.30
+Requires-Dist: alembic<2.0.0,>=1.13.0
+Requires-Dist: pydantic<3.0.0,>=2.7.0
+Requires-Dist: pydantic-settings<3.0.0,>=2.2.1
+Requires-Dist: python-dotenv<2.0.0,>=1.0.1
+Requires-Dist: email-validator<3.0.0,>=2.1.1
+Requires-Dist: python-jose[cryptography]<4.0.0,>=3.3.0
+Requires-Dist: passlib[bcrypt]<2.0.0,>=1.7.4
+Requires-Dist: psycopg[binary]<4.0.0,>=3.2.0
+Provides-Extra: dev
+Requires-Dist: pytest<9.0.0,>=8.2.0; extra == "dev"
+Requires-Dist: httpx<1.0.0,>=0.27.0; extra == "dev"
+Requires-Dist: ruff<1.0.0,>=0.6.0; extra == "dev"
+
+# SMWeb Backend
+
+FastAPI + SQLAlchemy backend skeleton with Alembic migrations.
+
+## Requirements
+
+- Python 3.11+
+
+## Quick Start
+
+1. Install dependencies:
+
+```bash
+pip install -e .
+```
+
+2. Copy environment file:
+
+```bash
+cp .env.example .env
+```
+
+3. Run initial migration:
+
+```bash
+alembic upgrade head
+```
+
+4. Start API server:
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+## Implemented V1 Endpoints
+
+- `POST /profiles`
+- `GET /profiles`
+- `GET /profiles/{id}`
+- `PUT /profiles/{id}`
+- `DELETE /profiles/{id}`
+- `POST /charts/natal`
+- `GET /charts/natal/{id}`
+- `POST /reports/natal`
+- `POST /ai-interview/bazi/start`
+- `GET /ai-interview/bazi/latest/{profile_id}`
+- `POST /ai-interview/bazi/{session_id}/answer`
+- `GET /ai-interview/bazi/{session_id}/export`
+- `DELETE /ai-interview/bazi/{session_id}`
+
+## Notes
+
+- Swiss Ephemeris integration uses `pyswisseph` when available.
+- If `pyswisseph` is unavailable, the API falls back to deterministic mock chart payloads for local development.
+- AI interview supports DeepSeek integration when `DEEPSEEK_API_KEY` is configured; otherwise it falls back to deterministic local question/summary logic for development.
+
+## Project Structure
+
+- `app/main.py`: FastAPI application entry.
+- `app/core/`: configuration, logging, security, error handlers.
+- `app/db/`: SQLAlchemy base + session/engine setup.
+- `app/models/`: ORM models.
+- `app/schemas/`: Pydantic request/response schemas.
+- `alembic/`: migration environment and revisions.
