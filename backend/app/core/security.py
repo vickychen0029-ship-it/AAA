@@ -9,12 +9,26 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+pwd_context = CryptContext(
+    schemes=["pbkdf2_sha256", "bcrypt"],
+    deprecated=["bcrypt"],
+)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    verified, _ = verify_password_and_update(plain_password, hashed_password)
+    return verified
+
+
+def verify_password_and_update(plain_password: str, hashed_password: str) -> tuple[bool, str | None]:
+    if not hashed_password:
+        return False, None
+    try:
+        return pwd_context.verify_and_update(plain_password, hashed_password)
+    except Exception:
+        # Legacy/invalid hashes should not crash login; just treat as mismatch.
+        return False, None
 
 
 def get_password_hash(password: str) -> str:

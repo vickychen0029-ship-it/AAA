@@ -6,7 +6,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_superuser, get_current_user
-from app.core.security import create_access_token, get_password_hash, verify_password
+from app.core.security import (
+    create_access_token,
+    get_password_hash,
+    verify_password,
+    verify_password_and_update,
+)
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import Token, UserCreate, UserRead
@@ -49,10 +54,18 @@ def register(payload: UserCreate, db: Session = Depends(get_db)) -> UserRead:
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> Token:
     phone = _normalize_phone(form_data.username)
     user = db.scalar(select(User).where(User.email == phone))
-    if user is None or not verify_password(form_data.password, user.hashed_password):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid phone or password")
+    verified, maybe_new_hash = verify_password_and_update(form_data.password, user.hashed_password)
+    if not verified:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid phone or password")
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="inactive user")
+
+    if maybe_new_hash and maybe_new_hash != user.hashed_password:
+        user.hashed_password = maybe_new_hash
+        db.add(user)
+        db.commit()
 
     token = create_access_token(
         subject=user.id,
