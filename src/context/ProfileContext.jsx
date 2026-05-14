@@ -59,19 +59,24 @@ function isDraftProfileId(id) {
 }
 
 function getBackupKey(user) {
-  const uid = user?.id || user?.email
+  const uid = user?.email || user?.id
   if (!uid) return ''
   return `${PROFILE_BACKUP_KEY_PREFIX}:${uid}`
 }
 
 function readProfileBackup(user) {
-  const key = getBackupKey(user)
-  if (!key) return null
+  const primaryKey = getBackupKey(user)
+  const legacyKey = user?.id ? `${PROFILE_BACKUP_KEY_PREFIX}:${user.id}` : ''
+  if (!primaryKey && !legacyKey) return null
   try {
-    const raw = localStorage.getItem(key)
+    let raw = primaryKey ? localStorage.getItem(primaryKey) : null
+    if (!raw && legacyKey) raw = localStorage.getItem(legacyKey)
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed?.profiles) || parsed.profiles.length === 0) return null
+    if (!localStorage.getItem(primaryKey) && raw && primaryKey) {
+      localStorage.setItem(primaryKey, raw)
+    }
     return {
       profiles: parsed.profiles,
       currentProfileId: parsed.currentProfileId || parsed.profiles[0]?.id,
