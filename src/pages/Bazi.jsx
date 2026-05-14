@@ -1045,7 +1045,7 @@ export default function Bazi() {
 
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
-            日主：{bazi.dayMaster.stem}（{reading?.dayElement}）
+            日主：{bazi.dayMaster.stem}
           </span>
           {' · '}
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
@@ -1056,7 +1056,7 @@ export default function Bazi() {
 
       <div className="card mt-24 bazi-precision-card">
         <div style={{ padding: '10px 14px', borderBottom: '1px solid #eef1f6', background: '#fbfcff', fontSize: '0.76rem', color: '#6b7280' }}>
-          准确优先模式：当前仅展示已校验神煞集合（先保准确，再逐步扩充）
+          准确优先模式：当前仅展示已校验神煞集合
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="bazi-precision-table">

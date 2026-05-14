@@ -27,10 +27,11 @@ const navGroups = [
   },
   {
     id: 'global',
-    title: '海外星命',
+    title: '海外命理',
     items: [
       { to: '/zodiac', icon: '✨', label: '星座占星' },
       { to: '/vedic', icon: '🕉️', label: '印占占星' },
+      { to: '/tarot', icon: '🃏', label: '塔罗占卜' },
     ],
   },
 ]
@@ -105,7 +106,11 @@ function AppLayout() {
       location.pathname.startsWith('/meihua') ||
       location.pathname.startsWith('/dream-sign')
     ) return 'east'
-    if (location.pathname.startsWith('/zodiac') || location.pathname.startsWith('/vedic')) return 'global'
+    if (
+      location.pathname.startsWith('/zodiac')
+      || location.pathname.startsWith('/vedic')
+      || location.pathname.startsWith('/tarot')
+    ) return 'global'
     return null
   }, [location.pathname])
 
@@ -254,6 +259,7 @@ function AppLayout() {
             <Route path="/meihua" element={<Placeholder title="梅花易数" />} />
             <Route path="/dream-sign" element={<Placeholder title="占梦问签" />} />
             <Route path="/vedic" element={<Vedic />} />
+            <Route path="/tarot" element={<Placeholder title="塔罗占卜" />} />
             <Route path="/synastry" element={<Placeholder title="合盘配对" />} />
             <Route path="/calendar" element={<Placeholder title="运势日历" />} />
             <Route path="/star-calendar" element={<Placeholder title="星象日历" />} />
