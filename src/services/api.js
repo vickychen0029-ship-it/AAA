@@ -4,6 +4,18 @@ const API_BASE = (
 ).replace(/\/+$/, '')
 const TOKEN_KEY = 'smweb_access_token'
 
+function extractErrorMessage(data, status) {
+  if (!data) return `请求失败：${status}`
+  if (typeof data === 'string') return data
+  if (typeof data?.detail === 'string' && data.detail.trim()) return data.detail
+  if (typeof data?.error?.message === 'string' && data.error.message.trim()) return data.error.message
+  if (Array.isArray(data?.error?.details) && data.error.details.length > 0) {
+    const first = data.error.details[0]
+    if (typeof first?.msg === 'string' && first.msg.trim()) return first.msg
+  }
+  return `请求失败：${status}`
+}
+
 async function parseResponse(response) {
   const text = await response.text()
   let data = null
@@ -26,8 +38,7 @@ async function parseResponse(response) {
       }
       throw new Error('登录已失效，请重新登录后再试')
     }
-    const detail = data?.detail || `请求失败：${response.status}`
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    throw new Error(extractErrorMessage(data, response.status))
   }
   return data
 }

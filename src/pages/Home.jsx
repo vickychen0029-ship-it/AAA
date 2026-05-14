@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useProfile } from '../context/useProfile.js'
+import AIInterviewPanel from '../components/AIInterviewPanel.jsx'
 import { sunLongitude } from '../calculations/astronomy/sun.js'
 import { moonLongitude } from '../calculations/astronomy/moon.js'
-import { planetLongitude } from '../calculations/astronomy/planets.js'
+import { planetLongitude, junoLongitude } from '../calculations/astronomy/planets.js'
+import { northNodeLongitude } from '../calculations/astronomy/northNode.js'
 import { ascendant } from '../calculations/western/ascendant.js'
 import { getSign } from '../calculations/western/signs.js'
 import { resolveBirthLocation } from '../calculations/utils/location.js'
@@ -165,8 +167,8 @@ export default function Home() {
     const mercuryLon = planetLongitude('mercury', jd)
     const venusLon = planetLongitude('venus', jd)
     const marsLon = planetLongitude('mars', jd)
-    const jupiterLon = planetLongitude('jupiter', jd)
-    const saturnLon = planetLongitude('saturn', jd)
+    const nodeLon = northNodeLongitude(jd)
+    const junoLon = junoLongitude(jd)
 
     const placements = [
       { key: 'sun', longitude: sunLon, sign: getSign(sunLon) },
@@ -174,8 +176,8 @@ export default function Home() {
       { key: 'mercury', longitude: mercuryLon, sign: getSign(mercuryLon) },
       { key: 'venus', longitude: venusLon, sign: getSign(venusLon) },
       { key: 'mars', longitude: marsLon, sign: getSign(marsLon) },
-      { key: 'jupiter', longitude: jupiterLon, sign: getSign(jupiterLon) },
-      { key: 'saturn', longitude: saturnLon, sign: getSign(saturnLon) },
+      { key: 'northNode', longitude: nodeLon, sign: getSign(nodeLon) },
+      { key: 'juno', longitude: junoLon, sign: getSign(junoLon) },
     ]
 
     return { placements, sunSign: getSign(sunLon), moonSign: getSign(moonLon), ascSign: getSign(ascLon), ascLon, jd }
@@ -220,6 +222,126 @@ export default function Home() {
     }
   }, [])
 
+  const readingPanels = useMemo(() => ({
+    character: {
+      title: '性格密码',
+      main: `太阳${astroData?.sunSign?.name || '天蝎'}强调目标与方向，月亮${astroData?.moonSign?.name || '巨蟹'}强化情绪感知，上升${astroData?.ascSign?.name || '处女'}决定你对外的执行风格。你的核心优势在“感知 + 执行”的连动。`,
+      sideA: '你的决策方式通常是先感受趋势，再迅速建立行动框架。',
+      sideB: '当节奏失衡时，先回到作息与边界，再谈效率会更稳。',
+    },
+    love: {
+      title: '爱情轨迹',
+      main: `情感模式偏重“安全感 + 可持续”，你更看重关系里的稳定回应与现实协同。短期热度不是重点，长期一致性才是你真正会投入的前提。`,
+      sideA: '沟通建议：先复述对方诉求，再表达自己的边界。',
+      sideB: '关系升级关键：价值观一致 + 生活节奏兼容。',
+    },
+    career: {
+      title: '事业财富',
+      main: `事业上你更适合“主线深耕 + 节点放大”，不宜多线分散。财富策略上建议先稳现金流，再把可复利能力做厚，这会比短线冲刺更贴合你的盘面节奏。`,
+      sideA: '工作策略：季度目标拆到双周节奏，复盘优先。',
+      sideB: '财务策略：风险上限先设定，再做增量配置。',
+    },
+    destiny: {
+      title: '宿命课题',
+      main: '你的课题不是“能不能赢”，而是“如何长期赢”。当你把天赋从阶段爆发转为体系化输出，命盘中的优势会更稳定兑现，抗波动能力也会显著提升。',
+      sideA: '长期关键词：秩序、边界、节律、复盘。',
+      sideB: '成长节点：从个人能力升级到系统能力。',
+    },
+  }), [astroData?.ascSign?.name, astroData?.moonSign?.name, astroData?.sunSign?.name])
+
+  const corePlacements = useMemo(() => {
+    if (!astroData) return []
+    const find = (key) => astroData.placements.find((p) => p.key === key)
+    const entries = [
+      { key: 'sun', label: '太阳', icon: '☀️', desc: '核心自我与人生主轴' },
+      { key: 'moon', label: '月亮', icon: '🌙', desc: '情绪反应与安全感' },
+      { key: 'rising', label: '上升', icon: '⬆️', desc: '外在气质与起手风格' },
+      { key: 'venus', label: '金星', icon: '♀️', desc: '关系偏好与审美' },
+      { key: 'mercury', label: '水星', icon: '☿️', desc: '思维方式与沟通模式' },
+      { key: 'mars', label: '火星', icon: '♂️', desc: '行动力与竞争驱动' },
+      { key: 'northNode', label: '北交', icon: '☊', desc: '成长方向与人生课题' },
+      { key: 'juno', label: '婚神', icon: '💍', desc: '伴侣画像与承诺模式' },
+    ]
+    return entries.map((item) => {
+      if (item.key === 'rising') {
+        return {
+          ...item,
+          sign: astroData.ascSign?.name || '-',
+          emoji: astroData.ascSign?.emoji || '·',
+        }
+      }
+      const p = find(item.key)
+      return {
+        ...item,
+        sign: p?.sign?.name || '-',
+        emoji: p?.sign?.emoji || '·',
+      }
+    })
+  }, [astroData])
+
+  const placementDetails = useMemo(() => {
+    const map = {
+      sun: {
+        core: '核心意志稳，重长期价值。',
+        detail: '太阳落此更重稳定与兑现，做决定偏谨慎务实，适合把资源持续投入到可复利的长期目标。',
+      },
+      moon: {
+        core: '情绪细腻，安全感导向。',
+        detail: '月亮落此让你在关系与生活节奏上更看重被理解和被托底，先稳内在状态，外在效率会更高。',
+      },
+      rising: {
+        core: '外在风格克制，执行有序。',
+        detail: '上升决定第一印象与起手方式，你更容易给人专业、稳妥、边界清晰的感觉，适合结构化推进事务。',
+      },
+      venus: {
+        core: '关系偏好明确，审美感强。',
+        detail: '金星指向你在爱与美的价值取向，你更看重相处质感与长期一致性，不倾向短期高波动关系。',
+      },
+      mercury: {
+        core: '思维清楚，表达重逻辑。',
+        detail: '水星落此让你在沟通上重条理与结论，适合把复杂问题拆解成步骤，协作中更容易建立信任。',
+      },
+      mars: {
+        core: '行动果断，竞争心适中。',
+        detail: '火星决定推进方式，你更适合“先定策略再加速执行”，在高压环境下也能保持稳定输出与节奏。',
+      },
+      northNode: {
+        core: '成长课题清晰，方向感强。',
+        detail: '北交点像人生导航，提示你应持续升级的能力区，顺着该方向投入，长期回报通常更明显。',
+      },
+      juno: {
+        core: '伴侣画像务实，重承诺质量。',
+        detail: '婚神反映亲密关系中的承诺模式，你更适合价值观匹配、节奏兼容且能共同承担现实目标的关系。',
+      },
+    }
+    return corePlacements.map((item) => ({
+      ...item,
+      coreText: map[item.key]?.core || item.desc,
+      detailText: map[item.key]?.detail || item.desc,
+    }))
+  }, [corePlacements])
+
+  const interviewPayload = useMemo(() => {
+    if (!astroData?.placements?.length) return null
+    const placementMap = Object.fromEntries(
+      astroData.placements.map((p) => [p.key, {
+        sign: p.sign.name,
+        element: p.sign.element,
+        longitude: Number(p.longitude.toFixed(3)),
+      }]),
+    )
+    return {
+      sun_sign: astroData.sunSign?.name || '',
+      moon_sign: astroData.moonSign?.name || '',
+      rising_sign: astroData.ascSign?.name || '',
+      profile: {
+        gender: profile.gender || '',
+        birth_place: profile.birthPlace || '',
+      },
+      placements: placementMap,
+    }
+  }, [astroData, profile.birthPlace, profile.gender])
+
   if (!hasProfile) {
     return (
       <div className="page page-wide">
@@ -253,8 +375,32 @@ export default function Home() {
 
   return (
     <div className="page page-wide">
+      <div className="page-header zodiac-head">
+        <h1>✨ 星座占星</h1>
+        <p>先看核心，再看细节。以下内容仅展示星座占星相关信息。</p>
+      </div>
+
       <div className="page-section">
-        <div className="grid-3">
+        <div className="page-section-title">星体落座速览</div>
+        <div className="home-placements-board card">
+          <div className="home-placements-board-head">
+            <div className="home-placements-board-title">本命结构一览</div>
+            <div className="home-placements-board-sub">8个关键点位，先看气质轮廓，再看行动与关系倾向</div>
+          </div>
+          <div className="home-placements-list">
+            {placementDetails.map((item) => (
+              <div key={item.key} className="home-placements-line-item">
+                <div className="title">{item.icon} {item.label} · {item.emoji} {item.sign}</div>
+                <div className="core">{item.coreText}</div>
+                <div className="detail">{item.detailText}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="page-section">
+        <div className="home-core-grid">
           <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
             <div style={{ fontWeight: 600, fontSize: '0.9375rem', color: 'var(--text)' }}>核心画像标签</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
@@ -278,16 +424,6 @@ export default function Home() {
               上升{astroData?.ascSign?.name || '处女座'}赋予你独特的外在气质。
             </p>
           </div>
-
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
-            <div style={{ fontWeight: 600, fontSize: '0.9375rem' }}>档案入口</div>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-              档案信息统一在“档案库”管理，支持新增、切换、编辑与删除。
-            </p>
-            <Link to="/profile" className="btn btn-secondary" style={{ fontSize: '0.8125rem', height: 36 }}>
-              打开档案库
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -299,7 +435,7 @@ export default function Home() {
           </span>
         </div>
 
-        <div className="grid-3">
+        <div className="home-fortune-layout">
           <div className="card">
             <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 16 }}>运势指数</div>
             <div className="fortune-items">
@@ -318,19 +454,23 @@ export default function Home() {
           </div>
 
           <div className="card">
+            <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: 12 }}>今日主建议</div>
+            <p style={{ lineHeight: 1.9, flex: 1 }}>{fortune.advice}</p>
+            <div className="home-fortune-foot">
+              <span>✅ 宜：{fortune.dos}</span>
+              <span>❌ 忌：{fortune.donts}</span>
+            </div>
+          </div>
+
+          <div className="card">
             <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 16 }}>每日幸运法宝</div>
             <div className="lucky-grid">
               <div className="lucky-row"><span className="lucky-label">🎨 幸运色</span><span className="lucky-value">{fortune.color}</span></div>
               <div className="lucky-row"><span className="lucky-label">🔢 幸运数字</span><span className="lucky-value">{fortune.number}</span></div>
               <div className="lucky-row"><span className="lucky-label">🧭 幸运方位</span><span className="lucky-value">{fortune.direction}</span></div>
-              <div className="lucky-row"><span className="lucky-label">✅ 今日宜</span><span className="lucky-value" style={{ color: '#10B981' }}>{fortune.dos}</span></div>
-              <div className="lucky-row"><span className="lucky-label">❌ 今日忌</span><span className="lucky-value" style={{ color: '#EF4444' }}>{fortune.donts}</span></div>
+              <div className="lucky-row"><span className="lucky-label">🔥 情绪能量</span><span className="lucky-value">{fortune.mood}/5</span></div>
+              <div className="lucky-row"><span className="lucky-label">💡 机会关键词</span><span className="lucky-value">{fortune.color}</span></div>
             </div>
-          </div>
-
-          <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 12 }}>运势建议</div>
-            <p style={{ lineHeight: 1.8, flex: 1 }}>{fortune.advice}</p>
           </div>
         </div>
       </div>
@@ -343,7 +483,7 @@ export default function Home() {
 
         <div className="tab-bar">
           {[
-            { key: 'character', label: '性格密码（Big 3）' },
+            { key: 'character', label: '性格密码' },
             { key: 'love', label: '爱情轨迹' },
             { key: 'career', label: '事业财富' },
             { key: 'destiny', label: '宿命课题' },
@@ -358,20 +498,31 @@ export default function Home() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          <div className="reading-card">
-            <div className="reading-card-title">☀️ 太阳 · {astroData?.sunSign?.name}</div>
-            <div className="reading-card-content">你拥有强烈的目标感与执行力，擅长持续推进复杂任务。</div>
+        <div className="home-reading-layout">
+          <div className="reading-card home-reading-main">
+            <div className="reading-card-title">{readingPanels[readingTab].title}</div>
+            <div className="reading-card-content">{readingPanels[readingTab].main}</div>
           </div>
-          <div className="reading-card">
-            <div className="reading-card-title">🌙 月亮 · {astroData?.moonSign?.name}</div>
-            <div className="reading-card-content">情感细腻，具备洞察他人的能力，需要稳定与安全的关系环境。</div>
-          </div>
-          <div className="reading-card">
-            <div className="reading-card-title">⬆️ 上升 · {astroData?.ascSign?.name}</div>
-            <div className="reading-card-content">外在表达理性克制，重视秩序，做事讲究方法和节奏。</div>
+          <div className="home-reading-side">
+            <div className="reading-card">
+              <div className="reading-card-title">行为模式</div>
+              <div className="reading-card-content">{readingPanels[readingTab].sideA}</div>
+            </div>
+            <div className="reading-card">
+              <div className="reading-card-title">调整建议</div>
+              <div className="reading-card-content">{readingPanels[readingTab].sideB}</div>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="page-section">
+        <AIInterviewPanel
+          systemType="zodiac"
+          profile={profile}
+          payload={interviewPayload}
+          title="命盘深度访谈解析（星座）"
+        />
       </div>
 
       <div className="page-section">
@@ -380,7 +531,7 @@ export default function Home() {
           <span className="section-subtitle" style={{ fontWeight: 400 }}>Placidus宫制</span>
         </div>
 
-        <div className="grid-3">
+        <div className="home-chart-top">
           <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 12 }}>本命星盘</div>
             <AstrologyWheel placements={astroData?.placements} ascLongitude={astroData?.ascLon} />
@@ -403,22 +554,22 @@ export default function Home() {
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div className="card">
-            <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 12 }}>相位分析</div>
-            <AspectMatrix />
-            <div className="aspect-legend" style={{ marginTop: 12 }}>
-              {[
-                { color: '#EF4444', label: '合相 0°' },
-                { color: '#10B981', label: '三分相 120°' },
-                { color: '#F59E0B', label: '四分相 90°' },
-                { color: '#3B82F6', label: '对分相 180°' },
-                { color: '#06B6D4', label: '六分相 60°' },
-                { color: '#8B5CF6', label: '梅花相 150°' },
-              ].map(a => (
-                <div key={a.label} className="aspect-legend-item"><span className="aspect-legend-dot" style={{ background: a.color }} />{a.label}</div>
-              ))}
-            </div>
+        <div className="card mt-24">
+          <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: 12 }}>相位分析</div>
+          <AspectMatrix />
+          <div className="aspect-legend" style={{ marginTop: 12 }}>
+            {[
+              { color: '#EF4444', label: '合相 0°' },
+              { color: '#10B981', label: '三分相 120°' },
+              { color: '#F59E0B', label: '四分相 90°' },
+              { color: '#3B82F6', label: '对分相 180°' },
+              { color: '#06B6D4', label: '六分相 60°' },
+              { color: '#8B5CF6', label: '梅花相 150°' },
+            ].map(a => (
+              <div key={a.label} className="aspect-legend-item"><span className="aspect-legend-dot" style={{ background: a.color }} />{a.label}</div>
+            ))}
           </div>
         </div>
       </div>

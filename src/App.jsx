@@ -1,5 +1,5 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
-import { BrowserRouter, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { useAuth } from './context/useAuth.js'
 import { ProfileProvider } from './context/ProfileContext.jsx'
@@ -13,23 +13,24 @@ const Vedic = lazy(() => import('./pages/Vedic.jsx'))
 const Login = lazy(() => import('./pages/Login.jsx'))
 const AdminUsers = lazy(() => import('./pages/AdminUsers.jsx'))
 
-const navSections = [
+const navGroups = [
   {
-    title: '命理体系',
+    id: 'east',
+    title: '东方命理',
     items: [
-      { to: '/zodiac', icon: '✨', label: '星座占星' },
-      { to: '/bazi', icon: '☯️', label: '八字命理' },
+      { to: '/bazi', icon: '☯️', label: '生辰八字' },
       { to: '/ziwei', icon: '🔮', label: '紫微斗数' },
-      { to: '/vedic', icon: '🕉️', label: '印占占星' },
+      { to: '/liuyao', icon: '🪙', label: '六壬速卜' },
+      { to: '/meihua', icon: '🌸', label: '梅花易数' },
+      { to: '/dream-sign', icon: '🧿', label: '占梦问签' },
     ],
   },
   {
-    title: '实用工具',
+    id: 'global',
+    title: '海外星命',
     items: [
-      { to: '/synastry', icon: '💑', label: '合盘配对' },
-      { to: '/calendar', icon: '📅', label: '运势日历' },
-      { to: '/star-calendar', icon: '🌟', label: '星象日历' },
-      { to: '/profile', icon: '👤', label: '档案管理' },
+      { to: '/zodiac', icon: '✨', label: '星座占星' },
+      { to: '/vedic', icon: '🕉️', label: '印占占星' },
     ],
   },
 ]
@@ -85,11 +86,33 @@ function buildProfileReport(profile) {
 }
 
 function AppLayout() {
+  const location = useLocation()
   const navigate = useNavigate()
   const { signOut } = useAuth()
   const { profile, profiles, setCurrentProfile } = useProfile()
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const [reportCopied, setReportCopied] = useState(false)
+  const [expandedGroups, setExpandedGroups] = useState({
+    east: false,
+    global: false,
+  })
+
+  const activeGroupId = useMemo(() => {
+    if (
+      location.pathname.startsWith('/bazi') ||
+      location.pathname.startsWith('/ziwei') ||
+      location.pathname.startsWith('/liuyao') ||
+      location.pathname.startsWith('/meihua') ||
+      location.pathname.startsWith('/dream-sign')
+    ) return 'east'
+    if (location.pathname.startsWith('/zodiac') || location.pathname.startsWith('/vedic')) return 'global'
+    return null
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!activeGroupId) return
+    setExpandedGroups((prev) => ({ ...prev, [activeGroupId]: true }))
+  }, [activeGroupId])
 
   const avatarChar = useMemo(() => {
     const name = (profile?.nickname || '').trim()
@@ -119,24 +142,32 @@ function AppLayout() {
         </div>
 
         <nav className="sidebar-nav">
-          {navSections.map((section) => (
-            <div key={section.title}>
-              <div className="sidebar-section-title">{section.title}</div>
-              {section.items.map(({ to, icon, label }) => (
-                <NavLink key={to} to={to}>
-                  <span className="nav-icon">{icon}</span>
-                  {label}
-                </NavLink>
-              ))}
+          {navGroups.map((group) => (
+            <div key={group.id} className="sidebar-group">
+              <button
+                type="button"
+                className={`sidebar-group-trigger ${expandedGroups[group.id] ? 'active' : ''}`}
+                onClick={() => setExpandedGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))}
+              >
+                <span className="sidebar-group-label">{group.title}</span>
+                <span className={`sidebar-group-caret ${expandedGroups[group.id] ? 'expanded' : ''}`} aria-hidden>
+                  ▾
+                </span>
+              </button>
+              {expandedGroups[group.id] && (
+                <div className="sidebar-group-items">
+                  {group.items.map(({ to, icon, label }) => (
+                    <NavLink key={to} to={to}>
+                      <span className="nav-icon">{icon}</span>
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </nav>
 
-        <div className="sidebar-bottom">
-          <button className="sidebar-bottom-btn" title="设置">⚙️</button>
-          <button className="sidebar-bottom-btn" title="通知">🔔</button>
-          <button className="sidebar-bottom-btn" title="用户">👤</button>
-        </div>
       </aside>
 
       <div className="main-content">
@@ -219,6 +250,9 @@ function AppLayout() {
             <Route path="/zodiac" element={<Home />} />
             <Route path="/bazi" element={<Bazi />} />
             <Route path="/ziwei" element={<Ziwei />} />
+            <Route path="/liuyao" element={<Placeholder title="六壬速卜" />} />
+            <Route path="/meihua" element={<Placeholder title="梅花易数" />} />
+            <Route path="/dream-sign" element={<Placeholder title="占梦问签" />} />
             <Route path="/vedic" element={<Vedic />} />
             <Route path="/synastry" element={<Placeholder title="合盘配对" />} />
             <Route path="/calendar" element={<Placeholder title="运势日历" />} />

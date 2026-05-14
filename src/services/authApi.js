@@ -11,6 +11,17 @@ function parseMaybeJson(text) {
   }
 }
 
+function extractErrorMessage(data, text, status, fallback) {
+  if (typeof data?.detail === 'string' && data.detail.trim()) return data.detail
+  if (typeof data?.error?.message === 'string' && data.error.message.trim()) return data.error.message
+  if (Array.isArray(data?.error?.details) && data.error.details.length > 0) {
+    const first = data.error.details[0]
+    if (typeof first?.msg === 'string' && first.msg.trim()) return first.msg
+  }
+  if (typeof text === 'string' && text.trim()) return text
+  return `${fallback}：${status}`
+}
+
 export function getStoredToken() {
   return localStorage.getItem(TOKEN_KEY) || ''
 }
@@ -40,8 +51,7 @@ export async function loginWithPhone(phone, password) {
   const text = await response.text()
   const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || text || `登录失败：${response.status}`
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    throw new Error(extractErrorMessage(data, text, response.status, '登录失败'))
   }
 
   if (!data?.access_token) {
@@ -69,8 +79,7 @@ export async function registerWithPhone(phone, password, username = null) {
   const text = await response.text()
   const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || text || `注册失败：${response.status}`
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    throw new Error(extractErrorMessage(data, text, response.status, '注册失败'))
   }
 
   return data
@@ -87,8 +96,7 @@ export async function fetchMe(token = getStoredToken()) {
   const text = await response.text()
   const data = parseMaybeJson(text)
   if (!response.ok) {
-    const detail = data?.detail || text || `获取用户信息失败：${response.status}`
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    throw new Error(extractErrorMessage(data, text, response.status, '获取用户信息失败'))
   }
   return data
 }

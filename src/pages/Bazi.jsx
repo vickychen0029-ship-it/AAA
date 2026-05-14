@@ -90,6 +90,121 @@ const WENCHANG_BY_DAY_STEM = {
   己: '酉', 庚: '亥', 辛: '子', 壬: '寅', 癸: '卯',
 }
 
+const YANGREN_BY_DAY_STEM = {
+  甲: '卯', 乙: '寅', 丙: '午', 丁: '巳', 戊: '午',
+  己: '巳', 庚: '酉', 辛: '申', 壬: '子', 癸: '亥',
+}
+
+const LUSHEN_BY_DAY_STEM = {
+  甲: '寅', 乙: '卯', 丙: '巳', 丁: '午', 戊: '巳',
+  己: '午', 庚: '申', 辛: '酉', 壬: '亥', 癸: '子',
+}
+
+const FUXING_BY_DAY_STEM = {
+  甲: ['寅', '子'], 丙: ['寅', '子'],
+  乙: ['卯', '丑'], 癸: ['卯', '丑'],
+  戊: ['申'], 己: ['未'], 丁: ['亥'], 庚: ['午'], 辛: ['巳'], 壬: ['辰'],
+}
+
+const TAIJI_BY_DAY_STEM = {
+  甲: ['子', '午'], 乙: ['子', '午'],
+  丙: ['卯', '酉'], 丁: ['卯', '酉'],
+  戊: ['辰', '戌', '丑', '未'], 己: ['辰', '戌', '丑', '未'],
+  庚: ['寅', '亥'], 辛: ['寅', '亥'],
+  壬: ['巳', '申'], 癸: ['巳', '申'],
+}
+
+const HONGYAN_BY_DAY_STEM = {
+  甲: ['午'], 乙: ['午'], 丙: ['寅'], 丁: ['未'], 戊: ['子'],
+  己: ['辰'], 庚: ['戌'], 辛: ['酉'], 壬: ['巳'], 癸: ['申'],
+}
+
+const HONGLUAN_BY_YEAR_BRANCH = {
+  子: '卯', 丑: '寅', 寅: '丑', 卯: '子', 辰: '亥', 巳: '戌',
+  午: '酉', 未: '申', 申: '未', 酉: '午', 戌: '巳', 亥: '辰',
+}
+
+const TIANXI_BY_YEAR_BRANCH = {
+  子: '酉', 丑: '申', 寅: '未', 卯: '午', 辰: '巳', 巳: '辰',
+  午: '卯', 未: '寅', 申: '丑', 酉: '子', 戌: '亥', 亥: '戌',
+}
+
+const WANGSHEN_BY_GROUP = { 申子辰: '亥', 寅午戌: '巳', 巳酉丑: '寅', 亥卯未: '申' }
+const JIESHA_BY_GROUP = { 申子辰: '巳', 寅午戌: '亥', 巳酉丑: '寅', 亥卯未: '申' }
+const ZAISHA_BY_GROUP = { 申子辰: '午', 亥卯未: '酉', 寅午戌: '子', 巳酉丑: '卯' }
+
+const GUOYIN_BY_STEM = {
+  甲: '戌', 乙: '亥', 丙: '丑', 丁: '寅', 戊: '丑',
+  己: '寅', 庚: '辰', 辛: '巳', 壬: '未', 癸: '申',
+}
+
+const JINYU_BY_STEM = {
+  甲: '辰', 乙: '巳', 丙: '未', 丁: '申', 戊: '未',
+  己: '申', 庚: '戌', 辛: '亥', 壬: '丑', 癸: '寅',
+}
+
+const DEXIU_STEMS_BY_MONTH_GROUP = {
+  寅午戌: ['丙', '丁'],
+  申子辰: ['壬', '癸'],
+  巳酉丑: ['庚', '辛'],
+  亥卯未: ['甲', '乙'],
+}
+
+const TONGZI_BY_GROUP = {
+  寅午戌: ['卯', '未', '申'],
+  申子辰: ['酉', '戌', '亥'],
+  巳酉丑: ['午', '未', '申'],
+  亥卯未: ['子', '丑', '寅'],
+}
+
+const TIANDE_BY_MONTH_GROUP = {
+  寅午戌: '丁',
+  亥卯未: '甲',
+  申子辰: '壬',
+  巳酉丑: '辛',
+}
+
+const YUEDE_BY_MONTH_GROUP = {
+  寅午戌: '丙',
+  亥卯未: '甲',
+  申子辰: '壬',
+  巳酉丑: '庚',
+}
+
+const STEM_COMBINE = {
+  甲: '己', 乙: '庚', 丙: '辛', 丁: '壬', 戊: '癸',
+  己: '甲', 庚: '乙', 辛: '丙', 壬: '丁', 癸: '戊',
+}
+
+const TIANYI_BY_MONTH_BRANCH = {
+  寅: '丑', 卯: '寅', 辰: '卯', 巳: '辰', 午: '巳', 未: '午',
+  申: '未', 酉: '申', 戌: '酉', 亥: '戌', 子: '亥', 丑: '子',
+}
+
+const GUCHEN_BY_YEAR_BRANCH = {
+  亥: '寅', 子: '寅', 丑: '寅',
+  寅: '巳', 卯: '巳', 辰: '巳',
+  巳: '申', 午: '申', 未: '申',
+  申: '亥', 酉: '亥', 戌: '亥',
+}
+
+const GUASU_BY_YEAR_BRANCH = {
+  亥: '戌', 子: '戌', 丑: '戌',
+  寅: '丑', 卯: '丑', 辰: '丑',
+  巳: '辰', 午: '辰', 未: '辰',
+  申: '未', 酉: '未', 戌: '未',
+}
+
+const DIAOKE_BY_YEAR_BRANCH = {
+  子: '戌', 丑: '亥', 寅: '子', 卯: '丑', 辰: '寅', 巳: '卯',
+  午: '辰', 未: '巳', 申: '午', 酉: '未', 戌: '申', 亥: '酉',
+}
+
+const PIMA_BY_YEAR_BRANCH = {
+  子: '酉', 丑: '戌', 寅: '亥', 卯: '子', 辰: '丑', 巳: '寅',
+  午: '卯', 未: '辰', 申: '巳', 酉: '午', 戌: '未', 亥: '申',
+}
+
 const TEN_GOD_TRAITS = {
   比肩: '独立、主见强，重个人边界和执行意志。',
   劫财: '竞争意识明显，行动果断，但要避免资源分散。',
@@ -146,6 +261,38 @@ const BRANCH_IMAGE = {
   亥: '深冬海水',
 }
 
+const BRANCH_ELEMENT = {
+  子: '水', 丑: '土', 寅: '木', 卯: '木', 辰: '土', 巳: '火',
+  午: '火', 未: '土', 申: '金', 酉: '金', 戌: '土', 亥: '水',
+}
+
+const ELEMENT_DECOR = {
+  金: '🔸',
+  木: '🌿',
+  水: '💧',
+  火: '🔥',
+  土: '⛰️',
+}
+
+const ACCURATE_PRIORITY_SHENSHA = new Set([
+  '桃花',
+  '驿马',
+  '华盖',
+  '将星',
+  '天乙贵人',
+  '文昌',
+  '羊刃',
+  '禄神',
+  '福星贵人',
+  '太极贵人',
+  '国印贵人',
+  '金舆',
+  '红鸾',
+  '天喜',
+  '亡神',
+  '劫煞',
+])
+
 
 const PILLAR_META = {
   year: {
@@ -172,6 +319,28 @@ const PILLAR_META = {
     role: '子女、下属、晚年',
     phase: '这是你的“果”。看晚景沉淀、团队影响力与传承能力。',
   },
+}
+
+function getPillarSexagenaryIndex(pillar) {
+  if (typeof pillar?.sexagenaryIndex === 'number') return pillar.sexagenaryIndex
+  if (typeof pillar?.stemIndex === 'number' && typeof pillar?.branchIndex === 'number') {
+    return stemBranchToSexagenary(pillar.stemIndex, pillar.branchIndex)
+  }
+  return null
+}
+
+function normalizeTagName(tag) {
+  return String(tag || '').split('（')[0].trim()
+}
+
+function filterAccurateShensha(tags) {
+  return (tags || [])
+    .map((tag) => normalizeTagName(tag))
+    .filter((name, i, arr) => ACCURATE_PRIORITY_SHENSHA.has(name) && arr.indexOf(name) === i)
+}
+
+function tagMatchesBranch(tag, branch) {
+  return tag.includes(`见${branch}`) || tag.includes(`在${branch}`) || tag.includes(`、${branch}`) || tag.includes(`${branch}）`)
 }
 
 
@@ -265,31 +434,73 @@ function detectBranchRelations(branches) {
   return { clashes, combines, penalties, halfCombines }
 }
 
-function detectShensha(dayStem, yearBranch, dayBranch, allBranches) {
+function detectShensha(yearStem, dayStem, yearBranch, dayBranch, allBranches) {
   const tags = []
+  const addTag = (tag) => {
+    const key = normalizeTagName(tag)
+    if (!tags.some((t) => normalizeTagName(t) === key)) tags.push(tag)
+  }
   const yearGroup = GROUP_BY_BRANCH[yearBranch]
   const dayGroup = GROUP_BY_BRANCH[dayBranch]
 
   const taohuaYear = TAOHUA_BY_GROUP[yearGroup]
   const taohuaDay = TAOHUA_BY_GROUP[dayGroup]
-  if (taohuaYear && allBranches.includes(taohuaYear)) tags.push(`桃花（以年支查：${yearGroup}见${taohuaYear}）`)
-  if (taohuaDay && allBranches.includes(taohuaDay) && taohuaDay !== taohuaYear) tags.push(`桃花（以日支查：${dayGroup}见${taohuaDay}）`)
+  if (taohuaYear && allBranches.includes(taohuaYear)) addTag(`桃花（以年支查：${yearGroup}见${taohuaYear}）`)
+  if (taohuaDay && allBranches.includes(taohuaDay) && taohuaDay !== taohuaYear) addTag(`桃花（以日支查：${dayGroup}见${taohuaDay}）`)
 
   const yima = YIMA_BY_GROUP[dayGroup]
-  if (yima && allBranches.includes(yima)) tags.push(`驿马（${dayGroup}马在${yima}）`)
+  if (yima && allBranches.includes(yima)) addTag(`驿马（${dayGroup}马在${yima}）`)
 
   const huagai = HUAGAI_BY_GROUP[dayGroup]
-  if (huagai && allBranches.includes(huagai)) tags.push(`华盖（${dayGroup}见${huagai}）`)
+  if (huagai && allBranches.includes(huagai)) addTag(`华盖（${dayGroup}见${huagai}）`)
 
   const jiangxing = JIANGXING_BY_GROUP[dayGroup]
-  if (jiangxing && allBranches.includes(jiangxing)) tags.push(`将星（${dayGroup}见${jiangxing}）`)
+  if (jiangxing && allBranches.includes(jiangxing)) addTag(`将星（${dayGroup}见${jiangxing}）`)
 
   const tianyi = TIANYI_BY_DAY_STEM[dayStem] || []
   const tianyiHit = tianyi.filter((b) => allBranches.includes(b))
-  if (tianyiHit.length > 0) tags.push(`天乙贵人（${dayStem}日见${tianyiHit.join('、')}）`)
+  if (tianyiHit.length > 0) addTag(`天乙贵人（${dayStem}日见${tianyiHit.join('、')}）`)
 
   const wenchang = WENCHANG_BY_DAY_STEM[dayStem]
-  if (wenchang && allBranches.includes(wenchang)) tags.push(`文昌（${dayStem}日见${wenchang}）`)
+  if (wenchang && allBranches.includes(wenchang)) addTag(`文昌（${dayStem}日见${wenchang}）`)
+
+  const yangren = YANGREN_BY_DAY_STEM[dayStem]
+  if (yangren && allBranches.includes(yangren)) addTag(`羊刃（${dayStem}日见${yangren}）`)
+
+  const lushen = LUSHEN_BY_DAY_STEM[dayStem]
+  if (lushen && allBranches.includes(lushen)) addTag(`禄神（${dayStem}日见${lushen}）`)
+
+  const fuxing = FUXING_BY_DAY_STEM[dayStem] || []
+  const fuxingHit = fuxing.filter((b) => allBranches.includes(b))
+  if (fuxingHit.length > 0) addTag(`福星贵人（${dayStem}日见${fuxingHit.join('、')}）`)
+
+  const taiji = TAIJI_BY_DAY_STEM[dayStem] || []
+  const taijiHit = taiji.filter((b) => allBranches.includes(b))
+  if (taijiHit.length > 0) addTag(`太极贵人（${dayStem}日见${taijiHit.join('、')}）`)
+
+  const hongyan = HONGYAN_BY_DAY_STEM[dayStem] || []
+  const hongyanHit = hongyan.filter((b) => allBranches.includes(b))
+  if (hongyanHit.length > 0) addTag(`红艳煞（${dayStem}日见${hongyanHit.join('、')}）`)
+
+  const hongluan = HONGLUAN_BY_YEAR_BRANCH[yearBranch]
+  if (hongluan && allBranches.includes(hongluan)) addTag(`红鸾（年支${yearBranch}见${hongluan}）`)
+
+  const tianxi = TIANXI_BY_YEAR_BRANCH[yearBranch]
+  if (tianxi && allBranches.includes(tianxi)) addTag(`天喜（年支${yearBranch}见${tianxi}）`)
+
+  const wangshen = WANGSHEN_BY_GROUP[dayGroup]
+  if (wangshen && allBranches.includes(wangshen)) addTag(`亡神（${dayGroup}见${wangshen}）`)
+
+  const jiesha = JIESHA_BY_GROUP[dayGroup]
+  if (jiesha && allBranches.includes(jiesha)) addTag(`劫煞（${dayGroup}见${jiesha}）`)
+
+  const guoyinBranches = [GUOYIN_BY_STEM[dayStem], GUOYIN_BY_STEM[yearStem]].filter(Boolean)
+  const guoyinHit = guoyinBranches.filter((b) => allBranches.includes(b))
+  if (guoyinHit.length > 0) addTag(`国印贵人（见${guoyinHit.join('、')}）`)
+
+  const jinyuBranches = [JINYU_BY_STEM[dayStem], JINYU_BY_STEM[yearStem]].filter(Boolean)
+  const jinyuHit = jinyuBranches.filter((b) => allBranches.includes(b))
+  if (jinyuHit.length > 0) addTag(`金舆（见${jinyuHit.join('、')}）`)
 
   return tags
 }
@@ -404,7 +615,7 @@ function buildInteractiveReport(bazi) {
   })
 
   const allBranches = [bazi.year.branch, bazi.month.branch, bazi.day.branch, bazi.hour.branch]
-  const shenshaTags = detectShensha(dayStem, bazi.year.branch, bazi.day.branch, allBranches)
+  const shenshaTags = filterAccurateShensha(detectShensha(bazi.year.stem, dayStem, bazi.year.branch, bazi.day.branch, allBranches))
   const shenshaDetails = shenshaTags.map((tag) => {
     const key = pickShenshaKeyword(tag)
     return {
@@ -449,6 +660,58 @@ function buildInteractiveReport(bazi) {
   ]
 
   return { pillarDetails, shenshaDetails, hiddenDynamics, summary, conclusions }
+}
+
+function buildPrecisionBaziMatrix(bazi, profileGender) {
+  if (!bazi) return null
+  const dayStem = bazi.day.stem
+  const columns = [
+    { key: 'year', label: '年柱', ...bazi.year },
+    { key: 'month', label: '月柱', ...bazi.month },
+    { key: 'day', label: '日柱', ...bazi.day },
+    { key: 'hour', label: '时柱', ...bazi.hour },
+  ]
+
+  const allBranches = columns.map((c) => c.branch)
+  const shenshaTags = filterAccurateShensha(detectShensha(bazi.year.stem, dayStem, bazi.year.branch, bazi.day.branch, allBranches))
+
+  const pillarScope = {
+    year: [bazi.year.branch],
+    month: [bazi.month.branch],
+    day: [bazi.day.branch],
+    hour: [bazi.hour.branch],
+  }
+
+  return columns.map((col) => {
+    const stemElement = getStemElement(HEAVENLY_STEMS.indexOf(col.stem))
+    const branchElement = BRANCH_ELEMENT[col.branch] || ''
+    const hidden = hiddenStemDetails(dayStem, col.branch)
+    const index = getPillarSexagenaryIndex(col)
+    const xunkong = typeof index === 'number' ? getXunKong(index).join('') : '--'
+    const nayin = typeof index === 'number' ? getNayinElement(index) : '--'
+    const shensha = shenshaTags
+      .filter((tag) => {
+        const scopes = pillarScope[col.key] || [col.branch]
+        return scopes.some((branch) => tagMatchesBranch(tag, branch))
+      })
+      .filter((name, i, arr) => name && arr.indexOf(name) === i)
+
+    return {
+      ...col,
+      mainStar: col.key === 'day' ? (profileGender === 'male' ? '元男' : '元女') : tenGod(dayStem, col.stem),
+      stemElement,
+      stemDecor: ELEMENT_DECOR[stemElement] || '·',
+      branchElement,
+      branchDecor: ELEMENT_DECOR[branchElement] || '·',
+      hidden,
+      viceStars: hidden.map((h) => h.god),
+      starState: getChangShengState(dayStem, col.branch),
+      selfSeat: getChangShengState(col.stem, col.branch),
+      xunkong,
+      nayin,
+      shensha,
+    }
+  })
 }
 
 function buildBaziReading(bazi) {
@@ -550,7 +813,7 @@ function buildBaziReading(bazi) {
     },
   ]
 
-  const shenshaTags = detectShensha(dayStem, bazi.year.branch, bazi.day.branch, allBranches)
+  const shenshaTags = filterAccurateShensha(detectShensha(bazi.year.stem, dayStem, bazi.year.branch, bazi.day.branch, allBranches))
   const shensha = [
     {
       title: '1. 神煞标签（简版）',
@@ -730,12 +993,13 @@ export default function Bazi() {
   const reading = buildBaziReading(bazi)
   const coreSelf = buildCoreSelfModule(bazi)
   const interactive = buildInteractiveReport(bazi)
+  const precisionMatrix = buildPrecisionBaziMatrix(bazi)
   const activeSession = interviewSessions[activeSection] || null
 
   return (
     <div className="page page-wide bazi-page">
       <div className="page-header">
-        <h1>☯️ 八字</h1>
+        <h1>☯️ 生辰八字</h1>
         <p>基于天文算法 + 节气实时计算</p>
         <div className="mode-switch">
           {Object.entries(READING_MODES).map(([key, label]) => (
@@ -755,156 +1019,6 @@ export default function Bazi() {
             : ' · 夏令时自动'}
         </span>
         <Link to="/profile" className="profile-badge-link">编辑</Link>
-      </div>
-
-      <div className="card mt-24">
-        <h3 style={{ marginBottom: 10 }}>命盘深度访谈解析</h3>
-        <p style={{ fontSize: '0.8125rem', marginBottom: 10 }}>
-          四大板块独立访谈：每个板块10题，按你的八字结构递进追问。
-        </p>
-        <p style={{ fontSize: '0.75rem', color: '#9a3412', marginBottom: 12 }}>
-          健康板块仅作参考，不替代医疗建议。
-        </p>
-
-        <div className="bazi-ai-entry-grid">
-          {interviewSections.map((s) => {
-            const session = interviewSessions[s.key]
-            const total = session?.total_questions || 10
-            const done = session?.answered_count || 0
-            const pct = Math.min(100, Math.round((done / total) * 100))
-            return (
-              <div key={s.key} className={`bazi-ai-entry-card ${activeSection === s.key ? 'active' : ''}`}>
-                <div className="bazi-ai-entry-title">{s.label}</div>
-                <div className="bazi-ai-entry-hint">{s.hint}</div>
-                <div className="bazi-ai-entry-meta">
-                  {session ? `进度 ${done}/${total}` : '尚未开始'}
-                </div>
-                {session && (
-                  <div style={{ height: 6, borderRadius: 999, background: '#dbeafe', marginTop: 8 }}>
-                    <div style={{ height: 6, borderRadius: 999, width: `${pct}%`, background: 'linear-gradient(90deg, #0f7f91, #16a7b8)' }} />
-                  </div>
-                )}
-                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                  {!session ? (
-                    <button className="btn btn-primary" type="button" onClick={() => handleStartInterview(s.key)} disabled={interviewBusy || interviewLoading}>
-                      点击开始（10题）
-                    </button>
-                  ) : (
-                    <>
-                      <button className="btn btn-secondary" type="button" onClick={() => setActiveSection(s.key)}>
-                        {session.status === 'completed' ? '查看结果' : '继续作答'}
-                      </button>
-                      <button className="btn btn-secondary" type="button" onClick={() => handleExport(s.key)} disabled={interviewBusy}>
-                        导出
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {activeSession && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-              当前板块：{interviewSections.find((s) => s.key === activeSection)?.label}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-              <span>进度：{activeSession.answered_count}/{activeSession.total_questions}</span>
-              <span>{Math.min(100, Math.round((activeSession.answered_count / activeSession.total_questions) * 100))}%</span>
-            </div>
-            <div style={{ height: 8, borderRadius: 999, background: '#dbeafe' }}>
-              <div style={{
-                height: 8,
-                borderRadius: 999,
-                width: `${Math.min(100, Math.round((activeSession.answered_count / activeSession.total_questions) * 100))}%`,
-                background: 'linear-gradient(90deg, #0f7f91, #16a7b8)',
-              }}
-              />
-            </div>
-
-            {activeSession.status !== 'completed' && activeSession.current_question && (
-              <div className="reading-card" style={{ marginTop: 4 }}>
-                <div className="reading-card-title">
-                  {activeSession.current_question.section_label} · 第{activeSession.current_question.question_number_in_section}问
-                </div>
-                <div className="reading-card-content" style={{ marginBottom: 10 }}>
-                  {activeSession.current_question.question}
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  {(activeSession.current_question.options || []).map((opt) => {
-                    const picked = answerInputBySection[activeSection]?.key === opt.key
-                    return (
-                      <button
-                        key={opt.key}
-                        type="button"
-                        className={`btn ${picked ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ justifyContent: 'flex-start', textAlign: 'left', height: 'auto', padding: '10px 12px', whiteSpace: 'normal' }}
-                        onClick={() => setAnswerInputBySection((prev) => ({ ...prev, [activeSection]: opt }))}
-                      >
-                        <strong>{opt.key}.</strong> {opt.text}
-                      </button>
-                    )
-                  })}
-                </div>
-                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={() => handleSubmitAnswer(activeSection)}
-                    disabled={interviewBusy || !answerInputBySection[activeSection]?.key}
-                  >
-                    {interviewBusy ? '提交中…' : '提交并进入下一问'}
-                  </button>
-                  <button className="btn btn-secondary" type="button" onClick={() => handleExport(activeSection)} disabled={interviewBusy}>
-                    {exportCopied ? '已复制并导出' : '导出当前记录'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {feedbackBySection[activeSection] && (
-              <div className="reading-card">
-                <div className="reading-card-title">AI即时反馈</div>
-                <div className="reading-card-content">{feedbackBySection[activeSection]}</div>
-              </div>
-            )}
-
-            {activeSession.status === 'completed' && (
-              <div className="reading-card" style={{ marginTop: 4 }}>
-                <div className="reading-card-title">访谈已完成</div>
-                <div className="reading-card-content">
-                  已完成该板块10题递进访谈，你可以导出完整问答记录，或查看下方AI总结。
-                </div>
-                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                  <button className="btn btn-secondary" type="button" onClick={() => handleExport(activeSection)} disabled={interviewBusy}>
-                    {exportCopied ? '已复制并导出' : '导出完整记录'}
-                  </button>
-                  <button className="btn btn-primary" type="button" onClick={() => handleStartInterview(activeSection)} disabled={interviewBusy}>
-                    重新开始新一轮访谈
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {activeSession.final_summary && (
-              <div className="reading-card">
-                <div className="reading-card-title">AI总结（结构化）</div>
-                <div className="reading-card-content" style={{ whiteSpace: 'pre-wrap' }}>
-                  {JSON.stringify(activeSession.final_summary, null, 2)}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {interviewLoading && (
-          <p style={{ marginTop: 10, fontSize: '0.8125rem' }}>正在加载最近访谈…</p>
-        )}
-        {interviewError && (
-          <p style={{ marginTop: 10, fontSize: '0.8125rem', color: '#b42318' }}>{interviewError}</p>
-        )}
       </div>
 
       <div className="result-card">
@@ -937,6 +1051,94 @@ export default function Bazi() {
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
             {ELEMENT_COMMENTS[reading?.dayElement] || '命盘结构用于趋势参考，不替代现实决策。'}
           </span>
+        </div>
+      </div>
+
+      <div className="card mt-24 bazi-precision-card">
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid #eef1f6', background: '#fbfcff', fontSize: '0.76rem', color: '#6b7280' }}>
+          准确优先模式：当前仅展示已校验神煞集合（先保准确，再逐步扩充）
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="bazi-precision-table">
+            <thead>
+              <tr>
+                <th>日期</th>
+                {precisionMatrix.map((col) => <th key={col.key}>{col.label}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>主星</td>
+                {precisionMatrix.map((col) => <td key={`${col.key}-main`}>{col.mainStar}</td>)}
+              </tr>
+              <tr>
+                <td>天干</td>
+                {precisionMatrix.map((col) => (
+                  <td key={`${col.key}-stem`}>
+                    <span className={`bazi-char bazi-el-${col.stemElement}`}>{col.stem}</span>
+                    <span className="bazi-char-decor">{col.stemDecor}</span>
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>地支</td>
+                {precisionMatrix.map((col) => (
+                  <td key={`${col.key}-branch`}>
+                    <span className={`bazi-char bazi-el-${col.branchElement}`}>{col.branch}</span>
+                    <span className="bazi-char-decor">{col.branchDecor}</span>
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>藏干</td>
+                {precisionMatrix.map((col) => (
+                  <td key={`${col.key}-hidden`}>
+                    <div className="bazi-precision-stack">
+                      {col.hidden.map((h) => (
+                        <div key={`${col.key}-${h.stem}`} className={`bazi-el-${h.element}`}>{h.stem}{h.element}</div>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>副星</td>
+                {precisionMatrix.map((col) => (
+                  <td key={`${col.key}-vice`}>
+                    <div className="bazi-precision-stack">
+                      {col.viceStars.map((star, idx) => <div key={`${col.key}-vice-${idx}`}>{star}</div>)}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>星运</td>
+                {precisionMatrix.map((col) => <td key={`${col.key}-state`}>{col.starState}</td>)}
+              </tr>
+              <tr>
+                <td>自坐</td>
+                {precisionMatrix.map((col) => <td key={`${col.key}-self`}>{col.selfSeat}</td>)}
+              </tr>
+              <tr>
+                <td>空亡</td>
+                {precisionMatrix.map((col) => <td key={`${col.key}-xk`}>{col.xunkong}</td>)}
+              </tr>
+              <tr>
+                <td>纳音</td>
+                {precisionMatrix.map((col) => <td key={`${col.key}-nayin`}>{col.nayin}</td>)}
+              </tr>
+              <tr>
+                <td>神煞</td>
+                {precisionMatrix.map((col) => (
+                  <td key={`${col.key}-ss`}>
+                    <div className="bazi-precision-stack">
+                      {col.shensha.length > 0 ? col.shensha.map((ss) => <div key={`${col.key}-${ss}`}>{ss}</div>) : <div>—</div>}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1137,6 +1339,156 @@ export default function Bazi() {
           })}
         </div>
       )}
+
+      <div className="card mt-24">
+        <h3 style={{ marginBottom: 10 }}>命盘深度访谈解析</h3>
+        <p style={{ fontSize: '0.8125rem', marginBottom: 10 }}>
+          四大板块独立访谈：每个板块10题，按你的八字结构递进追问。
+        </p>
+        <p style={{ fontSize: '0.75rem', color: '#9a3412', marginBottom: 12 }}>
+          健康板块仅作参考，不替代医疗建议。
+        </p>
+
+        <div className="bazi-ai-entry-grid">
+          {interviewSections.map((s) => {
+            const session = interviewSessions[s.key]
+            const total = session?.total_questions || 10
+            const done = session?.answered_count || 0
+            const pct = Math.min(100, Math.round((done / total) * 100))
+            return (
+              <div key={s.key} className={`bazi-ai-entry-card ${activeSection === s.key ? 'active' : ''}`}>
+                <div className="bazi-ai-entry-title">{s.label}</div>
+                <div className="bazi-ai-entry-hint">{s.hint}</div>
+                <div className="bazi-ai-entry-meta">
+                  {session ? `进度 ${done}/${total}` : '尚未开始'}
+                </div>
+                {session && (
+                  <div style={{ height: 6, borderRadius: 999, background: '#dbeafe', marginTop: 8 }}>
+                    <div style={{ height: 6, borderRadius: 999, width: `${pct}%`, background: 'linear-gradient(90deg, #0f7f91, #16a7b8)' }} />
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                  {!session ? (
+                    <button className="btn btn-primary" type="button" onClick={() => handleStartInterview(s.key)} disabled={interviewBusy || interviewLoading}>
+                      点击开始（10题）
+                    </button>
+                  ) : (
+                    <>
+                      <button className="btn btn-secondary" type="button" onClick={() => setActiveSection(s.key)}>
+                        {session.status === 'completed' ? '查看结果' : '继续作答'}
+                      </button>
+                      <button className="btn btn-secondary" type="button" onClick={() => handleExport(s.key)} disabled={interviewBusy}>
+                        导出
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {activeSession && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+              当前板块：{interviewSections.find((s) => s.key === activeSection)?.label}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+              <span>进度：{activeSession.answered_count}/{activeSession.total_questions}</span>
+              <span>{Math.min(100, Math.round((activeSession.answered_count / activeSession.total_questions) * 100))}%</span>
+            </div>
+            <div style={{ height: 8, borderRadius: 999, background: '#dbeafe' }}>
+              <div style={{
+                height: 8,
+                borderRadius: 999,
+                width: `${Math.min(100, Math.round((activeSession.answered_count / activeSession.total_questions) * 100))}%`,
+                background: 'linear-gradient(90deg, #0f7f91, #16a7b8)',
+              }}
+              />
+            </div>
+
+            {activeSession.status !== 'completed' && activeSession.current_question && (
+              <div className="reading-card" style={{ marginTop: 4 }}>
+                <div className="reading-card-title">
+                  {activeSession.current_question.section_label} · 第{activeSession.current_question.question_number_in_section}问
+                </div>
+                <div className="reading-card-content" style={{ marginBottom: 10 }}>
+                  {activeSession.current_question.question}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {(activeSession.current_question.options || []).map((opt) => {
+                    const picked = answerInputBySection[activeSection]?.key === opt.key
+                    return (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        className={`btn ${picked ? 'btn-primary' : 'btn-secondary'}`}
+                        style={{ justifyContent: 'flex-start', textAlign: 'left', height: 'auto', padding: '10px 12px', whiteSpace: 'normal' }}
+                        onClick={() => setAnswerInputBySection((prev) => ({ ...prev, [activeSection]: opt }))}
+                      >
+                        <strong>{opt.key}.</strong> {opt.text}
+                      </button>
+                    )
+                  })}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    onClick={() => handleSubmitAnswer(activeSection)}
+                    disabled={interviewBusy || !answerInputBySection[activeSection]?.key}
+                  >
+                    {interviewBusy ? '提交中…' : '提交并进入下一问'}
+                  </button>
+                  <button className="btn btn-secondary" type="button" onClick={() => handleExport(activeSection)} disabled={interviewBusy}>
+                    {exportCopied ? '已复制并导出' : '导出当前记录'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {feedbackBySection[activeSection] && (
+              <div className="reading-card">
+                <div className="reading-card-title">AI即时反馈</div>
+                <div className="reading-card-content">{feedbackBySection[activeSection]}</div>
+              </div>
+            )}
+
+            {activeSession.status === 'completed' && (
+              <div className="reading-card" style={{ marginTop: 4 }}>
+                <div className="reading-card-title">访谈已完成</div>
+                <div className="reading-card-content">
+                  已完成该板块10题递进访谈，你可以导出完整问答记录，或查看下方AI总结。
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                  <button className="btn btn-secondary" type="button" onClick={() => handleExport(activeSection)} disabled={interviewBusy}>
+                    {exportCopied ? '已复制并导出' : '导出完整记录'}
+                  </button>
+                  <button className="btn btn-primary" type="button" onClick={() => handleStartInterview(activeSection)} disabled={interviewBusy}>
+                    重新开始新一轮访谈
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeSession.final_summary && (
+              <div className="reading-card">
+                <div className="reading-card-title">AI总结（结构化）</div>
+                <div className="reading-card-content" style={{ whiteSpace: 'pre-wrap' }}>
+                  {JSON.stringify(activeSession.final_summary, null, 2)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {interviewLoading && (
+          <p style={{ marginTop: 10, fontSize: '0.8125rem' }}>正在加载最近访谈…</p>
+        )}
+        {interviewError && (
+          <p style={{ marginTop: 10, fontSize: '0.8125rem', color: '#b42318' }}>{interviewError}</p>
+        )}
+      </div>
 
       <p className="page-note">
         命理解读用于结构化自我观察与决策复盘 · 仅供娱乐与参考

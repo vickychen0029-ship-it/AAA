@@ -11,6 +11,8 @@ import {
 } from '../services/profilesApi.js'
 import { useAuth } from './useAuth.js'
 
+const PROFILE_BACKUP_KEY_PREFIX = 'smweb_profile_backup_v1'
+
 function createDraftProfile(base = {}) {
   return {
     id: base.id || `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -56,8 +58,50 @@ function isDraftProfileId(id) {
   return value === 'draft-empty' || value.startsWith('draft-')
 }
 
+function getBackupKey(user) {
+  const uid = user?.id || user?.email
+  if (!uid) return ''
+  return `${PROFILE_BACKUP_KEY_PREFIX}:${uid}`
+}
+
+function readProfileBackup(user) {
+  const key = getBackupKey(user)
+  if (!key) return null
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed?.profiles) || parsed.profiles.length === 0) return null
+    return {
+      profiles: parsed.profiles,
+      currentProfileId: parsed.currentProfileId || parsed.profiles[0]?.id,
+    }
+  } catch {
+    return null
+  }
+}
+
+function writeProfileBackup(user, profiles, currentProfileId) {
+  const key = getBackupKey(user)
+  if (!key) return
+  try {
+    const clean = (profiles || []).filter((p) => p && !isDraftProfileId(p.id))
+    if (clean.length === 0) return
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        profiles: clean,
+        currentProfileId: clean.some((p) => p.id === currentProfileId) ? currentProfileId : clean[0].id,
+        updatedAt: Date.now(),
+      }),
+    )
+  } catch {
+    // ignore storage failures
+  }
+}
+
 export function ProfileProvider({ children }) {
-  const { token, isAuthenticated } = useAuth()
+  const { token, isAuthenticated, user } = useAuth()
   const [state, setState] = useState({
     profiles: [createDraftProfile(EMPTY_PROFILE)],
     currentProfileId: EMPTY_PROFILE.id,
@@ -80,6 +124,16 @@ export function ProfileProvider({ children }) {
       const result = await listProfiles(10)
       const mapped = (result.items || []).map(mapBackendProfileToUi)
       if (mapped.length === 0) {
+        const backup = readProfileBackup(user)
+        if (backup?.profiles?.length) {
+          setState({
+            profiles: backup.profiles,
+            currentProfileId: backup.currentProfileId || backup.profiles[0].id,
+            loading: false,
+            error: '',
+          })
+          return
+        }
         setState({
           profiles: [createDraftProfile(EMPTY_PROFILE)],
           currentProfileId: EMPTY_PROFILE.id,
@@ -91,11 +145,15 @@ export function ProfileProvider({ children }) {
 
       setState((prev) => {
         const hasCurrent = mapped.some((p) => p.id === prev.currentProfileId)
-        return {
+        const nextState = {
           profiles: mapped,
           currentProfileId: hasCurrent ? prev.currentProfileId : mapped[0].id,
           loading: false,
           error: '',
+        }
+        writeProfileBackup(user, nextState.profiles, nextState.currentProfileId)
+        return {
+          ...nextState,
         }
       })
     } catch (err) {
@@ -110,6 +168,12 @@ export function ProfileProvider({ children }) {
   useEffect(() => {
     refreshProfiles()
   }, [refreshProfiles])
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return
+    if (!state.profiles?.length) return
+    writeProfileBackup(user, state.profiles, state.currentProfileId)
+  }, [isAuthenticated, user, state.profiles, state.currentProfileId])
 
   const profile = useMemo(
     () => state.profiles.find((p) => p.id === state.currentProfileId) || state.profiles[0] || createDraftProfile(EMPTY_PROFILE),

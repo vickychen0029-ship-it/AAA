@@ -17,6 +17,29 @@ class GeocodeResult:
     provider: str
 
 
+BUILTIN_LOCATIONS: dict[str, tuple[float, float, str]] = {
+    # China
+    "北京": (39.9042, 116.4074, "Asia/Shanghai"),
+    "上海": (31.2304, 121.4737, "Asia/Shanghai"),
+    "广州": (23.1291, 113.2644, "Asia/Shanghai"),
+    "深圳": (22.5431, 114.0579, "Asia/Shanghai"),
+    "杭州": (30.2741, 120.1551, "Asia/Shanghai"),
+    "南京": (32.0603, 118.7969, "Asia/Shanghai"),
+    "武汉": (30.5928, 114.3055, "Asia/Shanghai"),
+    "成都": (30.5728, 104.0668, "Asia/Shanghai"),
+    "重庆": (29.5630, 106.5516, "Asia/Shanghai"),
+    "西安": (34.3416, 108.9398, "Asia/Shanghai"),
+    "天津": (39.0842, 117.2009, "Asia/Shanghai"),
+    "郑州": (34.7473, 113.6249, "Asia/Shanghai"),
+    "长沙": (28.2282, 112.9388, "Asia/Shanghai"),
+    "贵阳": (26.6470, 106.6302, "Asia/Shanghai"),
+    "遵义": (27.7257, 106.9274, "Asia/Shanghai"),
+    "遵义市": (27.7257, 106.9274, "Asia/Shanghai"),
+    "贵州遵义": (27.7257, 106.9274, "Asia/Shanghai"),
+    "贵州省遵义市": (27.7257, 106.9274, "Asia/Shanghai"),
+}
+
+
 def geocode_location(query: str) -> GeocodeResult:
     text = (query or "").strip()
     if not text:
@@ -30,6 +53,10 @@ def geocode_location(query: str) -> GeocodeResult:
         fallback = _geocode_nominatim(candidate)
         if fallback is not None:
             return fallback
+
+        builtin = _geocode_builtin(candidate)
+        if builtin is not None:
+            return builtin
 
     raise ValueError(f"unable to geocode location: {query}")
 
@@ -165,6 +192,14 @@ def _build_query_candidates(query: str) -> list[str]:
     if stripped and stripped not in variants:
         variants.append(stripped)
 
+    if _contains_chinese(base):
+        with_country = f"{first_part or base},中国"
+        if with_country not in variants:
+            variants.append(with_country)
+        no_punct = re.sub(r"[,\s]", "", first_part or base)
+        if no_punct and no_punct not in variants:
+            variants.append(no_punct)
+
     # Deduplicate and keep non-empty candidates only.
     dedup: list[str] = []
     for item in variants:
@@ -180,3 +215,30 @@ def _strip_cn_suffix(text: str) -> str:
 
 def _contains_chinese(text: str) -> bool:
     return bool(re.search(r"[\u4e00-\u9fff]", text))
+
+
+def _normalize_builtin_key(text: str) -> str:
+    normalized = text.strip()
+    normalized = normalized.replace("，", ",").replace("、", ",").replace("；", ",")
+    normalized = re.sub(r"\s+", "", normalized)
+    normalized = normalized.replace(",", "")
+    normalized = re.sub(r"(中华人民共和国|中国)$", "", normalized)
+    normalized = re.sub(r"(特别行政区|自治区|自治州|地区|省)$", "", normalized)
+    return normalized
+
+
+def _geocode_builtin(query: str) -> GeocodeResult | None:
+    key = _normalize_builtin_key(query)
+    if not key:
+        return None
+
+    direct = BUILTIN_LOCATIONS.get(key)
+    if direct is not None:
+        lat, lng, tz = direct
+        return GeocodeResult(query=key, lat=lat, lng=lng, iana_tz=tz, provider="builtin")
+
+    for name, (lat, lng, tz) in BUILTIN_LOCATIONS.items():
+        nk = _normalize_builtin_key(name)
+        if nk and (nk in key or key in nk):
+            return GeocodeResult(query=name, lat=lat, lng=lng, iana_tz=tz, provider="builtin")
+    return None
