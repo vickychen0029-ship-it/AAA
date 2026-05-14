@@ -108,6 +108,15 @@ function writeProfileBackup(user, profiles, currentProfileId) {
 function mergeProfilesWithBackup(serverProfiles, backupProfiles) {
   if (!Array.isArray(serverProfiles) || serverProfiles.length === 0) return serverProfiles || []
   if (!Array.isArray(backupProfiles) || backupProfiles.length === 0) return serverProfiles
+  if (serverProfiles.length === 1 && backupProfiles.length === 1) {
+    const sp = serverProfiles[0]
+    const bp = backupProfiles[0]
+    return [{
+      ...sp,
+      nickname: (sp.nickname || '').trim() || bp.nickname || '',
+      gender: sp.gender || bp.gender || '',
+    }]
+  }
   return serverProfiles.map((sp) => {
     const candidate = backupProfiles.find((bp) =>
       (bp?.id && sp?.id && bp.id === sp.id)
@@ -191,7 +200,7 @@ export function ProfileProvider({ children }) {
         error: err instanceof Error ? err.message : '加载档案失败',
       }))
     }
-  }, [isAuthenticated, token])
+  }, [isAuthenticated, token, user])
 
   useEffect(() => {
     refreshProfiles()
