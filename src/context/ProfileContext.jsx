@@ -105,6 +105,28 @@ function writeProfileBackup(user, profiles, currentProfileId) {
   }
 }
 
+function mergeProfilesWithBackup(serverProfiles, backupProfiles) {
+  if (!Array.isArray(serverProfiles) || serverProfiles.length === 0) return serverProfiles || []
+  if (!Array.isArray(backupProfiles) || backupProfiles.length === 0) return serverProfiles
+  return serverProfiles.map((sp) => {
+    const candidate = backupProfiles.find((bp) =>
+      (bp?.id && sp?.id && bp.id === sp.id)
+      || (
+        String(bp?.birthDate || '') === String(sp?.birthDate || '')
+        && String(bp?.birthHour || '') === String(sp?.birthHour || '')
+        && String(bp?.birthMinute || '') === String(sp?.birthMinute || '')
+        && String(bp?.birthPlace || '') === String(sp?.birthPlace || '')
+      ),
+    )
+    if (!candidate) return sp
+    return {
+      ...sp,
+      nickname: (sp.nickname || '').trim() || candidate.nickname || '',
+      gender: sp.gender || candidate.gender || '',
+    }
+  })
+}
+
 export function ProfileProvider({ children }) {
   const { token, isAuthenticated, user } = useAuth()
   const [state, setState] = useState({
@@ -127,9 +149,10 @@ export function ProfileProvider({ children }) {
     setState((prev) => ({ ...prev, loading: true, error: '' }))
     try {
       const result = await listProfiles(10)
-      const mapped = (result.items || []).map(mapBackendProfileToUi)
+      const mappedRaw = (result.items || []).map(mapBackendProfileToUi)
+      const backup = readProfileBackup(user)
+      const mapped = mergeProfilesWithBackup(mappedRaw, backup?.profiles || [])
       if (mapped.length === 0) {
-        const backup = readProfileBackup(user)
         if (backup?.profiles?.length) {
           setState({
             profiles: backup.profiles,

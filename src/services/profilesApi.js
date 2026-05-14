@@ -1,5 +1,18 @@
 import { apiRequest } from './api.js'
 
+function normalizeGenderIn(value) {
+  const text = String(value || '').trim().toLowerCase()
+  if (!text) return ''
+  if (text === 'male' || text === '男' || text === 'm') return 'male'
+  if (text === 'female' || text === '女' || text === 'f') return 'female'
+  return ''
+}
+
+function normalizeGenderOut(value) {
+  const normalized = normalizeGenderIn(value)
+  return normalized || null
+}
+
 function pad2(value) {
   return String(value).padStart(2, '0')
 }
@@ -34,8 +47,8 @@ export function mapBackendProfileToUi(item) {
   const isManual = item.dst_auto === false
   return {
     id: item.id,
-    nickname: item.name || '',
-    gender: item.gender || '',
+    nickname: item.name || item.nickname || '',
+    gender: normalizeGenderIn(item.gender),
     birthDate: local.birthDate,
     birthHour: local.birthHour,
     birthMinute: local.birthMinute,
@@ -60,8 +73,8 @@ export function mapUiProfileToCreatePayload(profile) {
   }
 
   return {
-    name: (profile.nickname || '').trim(),
-    gender: profile.gender || null,
+    name: (profile.nickname || profile.name || '').trim(),
+    gender: normalizeGenderOut(profile.gender),
     location_query: (profile.birthPlace || '').trim(),
     current_place: (profile.currentPlace || '').trim() || null,
     birth_local_dt: birthLocalDt,
