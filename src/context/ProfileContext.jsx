@@ -136,6 +136,59 @@ function mergeProfilesWithBackup(serverProfiles, backupProfiles) {
   })
 }
 
+function profileCompletenessScore(profile) {
+  if (!profile) return 0
+  let score = 0
+  if ((profile.nickname || '').trim()) score += 4
+  if (profile.gender) score += 3
+  if (profile.birthDate) score += 2
+  if (profile.birthPlace) score += 2
+  if (profile.currentPlace) score += 1
+  return score
+}
+
+function sameBirthSignature(a, b) {
+  if (!a || !b) return false
+  return (
+    String(a.birthDate || '') === String(b.birthDate || '')
+    && String(a.birthHour || '') === String(b.birthHour || '')
+    && String(a.birthMinute || '') === String(b.birthMinute || '')
+    && String(a.birthPlace || '') === String(b.birthPlace || '')
+  )
+}
+
+function choosePreferredProfileId(mapped, previousId) {
+  if (!Array.isArray(mapped) || mapped.length === 0) return EMPTY_PROFILE.id
+  const hasPrev = mapped.find((p) => p.id === previousId)
+  if (!hasPrev) {
+    return [...mapped].sort((a, b) => profileCompletenessScore(b) - profileCompletenessScore(a))[0].id
+  }
+  const prevScore = profileCompletenessScore(hasPrev)
+  if (prevScore >= 6) return previousId
+  const siblingBetter = mapped.find((p) => p.id !== hasPrev.id && sameBirthSignature(p, hasPrev) && profileCompletenessScore(p) > prevScore)
+  if (siblingBetter) return siblingBetter.id
+  const globalBest = [...mapped].sort((a, b) => profileCompletenessScore(b) - profileCompletenessScore(a))[0]
+  return profileCompletenessScore(globalBest) > prevScore ? globalBest.id : previousId
+}
+
+function enrichCurrentProfile(profile, profiles) {
+  if (!profile) return profile
+  const needsNickname = !(profile.nickname || '').trim()
+  const needsGender = !profile.gender
+  if (!needsNickname && !needsGender) return profile
+  const list = Array.isArray(profiles) ? profiles : []
+  const sameBirth = list
+    .filter((p) => p.id !== profile.id && sameBirthSignature(p, profile))
+    .sort((a, b) => profileCompletenessScore(b) - profileCompletenessScore(a))[0]
+  const fallback = sameBirth || [...list].sort((a, b) => profileCompletenessScore(b) - profileCompletenessScore(a))[0]
+  if (!fallback || fallback.id === profile.id) return profile
+  return {
+    ...profile,
+    nickname: needsNickname ? (fallback.nickname || profile.nickname || '') : profile.nickname,
+    gender: needsGender ? (fallback.gender || profile.gender || '') : profile.gender,
+  }
+}
+
 export function ProfileProvider({ children }) {
   const { token, isAuthenticated, user } = useAuth()
   const [state, setState] = useState({
@@ -181,10 +234,10 @@ export function ProfileProvider({ children }) {
       }
 
       setState((prev) => {
-        const hasCurrent = mapped.some((p) => p.id === prev.currentProfileId)
+        const preferredId = choosePreferredProfileId(mapped, prev.currentProfileId)
         const nextState = {
           profiles: mapped,
-          currentProfileId: hasCurrent ? prev.currentProfileId : mapped[0].id,
+          currentProfileId: preferredId,
           loading: false,
           error: '',
         }
@@ -213,7 +266,10 @@ export function ProfileProvider({ children }) {
   }, [isAuthenticated, user, state.profiles, state.currentProfileId])
 
   const profile = useMemo(
-    () => state.profiles.find((p) => p.id === state.currentProfileId) || state.profiles[0] || createDraftProfile(EMPTY_PROFILE),
+    () => {
+      const current = state.profiles.find((p) => p.id === state.currentProfileId) || state.profiles[0] || createDraftProfile(EMPTY_PROFILE)
+      return enrichCurrentProfile(current, state.profiles)
+    },
     [state.currentProfileId, state.profiles],
   )
 
