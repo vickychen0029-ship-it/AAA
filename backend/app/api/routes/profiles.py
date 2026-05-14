@@ -67,7 +67,13 @@ def create_profile(
     resolved_tz = payload.iana_tz
 
     if lat is None or lng is None or not resolved_tz:
-        geocoded = geocode_location(payload.location_query)
+        try:
+            geocoded = geocode_location(payload.location_query)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(exc),
+            ) from exc
         lat = geocoded.lat if lat is None else lat
         lng = geocoded.lng if lng is None else lng
         resolved_tz = resolved_tz or geocoded.iana_tz
