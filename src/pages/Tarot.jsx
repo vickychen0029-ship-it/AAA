@@ -104,11 +104,12 @@ function pickCards(seedText, count = 3) {
 }
 
 function cardPosition(index, total, phase, pickOrder = -1) {
+  const shiftX = -54
   if (phase === 'focus' && pickOrder >= 0) {
     const xMap = [-150, 0, 150]
     const yMap = [18, 0, 18]
     const rMap = [-5, 0, 5]
-    return { x: xMap[pickOrder], y: yMap[pickOrder], rotate: rMap[pickOrder] }
+    return { x: xMap[pickOrder] + shiftX, y: yMap[pickOrder], rotate: rMap[pickOrder] }
   }
   // selection phase: 5 cards per row, two-row layout when total=10
   const cols = 5
@@ -116,7 +117,7 @@ function cardPosition(index, total, phase, pickOrder = -1) {
   const rowStart = row * cols
   const rowSize = Math.min(cols, total - rowStart)
   const colInRow = index - rowStart
-  const x = (colInRow - (rowSize - 1) / 2) * 148
+  const x = (colInRow - (rowSize - 1) / 2) * 148 + shiftX
   const rowCount = Math.ceil(total / cols)
   const y = (row - (rowCount - 1) / 2) * 138
   return { x, y, rotate: 0 }
