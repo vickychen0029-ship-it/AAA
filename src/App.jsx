@@ -10,6 +10,7 @@ const Profile = lazy(() => import('./pages/Profile.jsx'))
 const Bazi = lazy(() => import('./pages/Bazi.jsx'))
 const Ziwei = lazy(() => import('./pages/Ziwei.jsx'))
 const Vedic = lazy(() => import('./pages/Vedic.jsx'))
+const Tarot = lazy(() => import('./pages/Tarot.jsx'))
 const Login = lazy(() => import('./pages/Login.jsx'))
 const AdminUsers = lazy(() => import('./pages/AdminUsers.jsx'))
 
@@ -259,7 +260,7 @@ function AppLayout() {
             <Route path="/meihua" element={<Placeholder title="梅花易数" />} />
             <Route path="/dream-sign" element={<Placeholder title="占梦问签" />} />
             <Route path="/vedic" element={<Vedic />} />
-            <Route path="/tarot" element={<Placeholder title="塔罗占卜" />} />
+            <Route path="/tarot" element={<Tarot />} />
             <Route path="/synastry" element={<Placeholder title="合盘配对" />} />
             <Route path="/calendar" element={<Placeholder title="运势日历" />} />
             <Route path="/star-calendar" element={<Placeholder title="星象日历" />} />
