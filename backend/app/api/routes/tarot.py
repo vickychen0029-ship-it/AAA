@@ -28,3 +28,11 @@ def interpret_tarot(
     ]
     result = build_tarot_reading(payload.question, cards)
     return TarotInterpretResponse(**result)
+
+
+@router.post("/ai-interview/tarot/interpret", response_model=TarotInterpretResponse)
+def interpret_tarot_legacy_path(
+    payload: TarotInterpretRequest,
+    user: User = Depends(get_current_user),
+) -> TarotInterpretResponse:
+    return interpret_tarot(payload, user)

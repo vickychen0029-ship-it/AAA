@@ -176,7 +176,14 @@ export default function Tarot() {
         const result = await interpretTarot(payload)
         if (!cancelled) setAiReading(result)
       } catch (err) {
-        if (!cancelled) setAiError(err?.message || 'AI解析失败，已显示本地解读。')
+        if (!cancelled) {
+          const msg = err?.message || ''
+          if (/not found|404/i.test(msg)) {
+            setAiError('AI解析接口未就绪，已显示本地解读。请等待最新版本部署完成。')
+          } else {
+            setAiError(msg || 'AI解析失败，已显示本地解读。')
+          }
+        }
       } finally {
         if (!cancelled) setAiLoading(false)
       }
