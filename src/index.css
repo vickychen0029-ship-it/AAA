@@ -1648,6 +1648,14 @@ p {
   transition: transform 0.54s cubic-bezier(0.21, 0.88, 0.28, 0.98), filter 0.3s ease, opacity 0.25s ease;
 }
 
+.tarotx-card.flat {
+  transition: transform 0.36s ease, filter 0.26s ease, opacity 0.26s ease;
+}
+
+.tarotx-card.focus {
+  transition: transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), filter 0.26s ease, opacity 0.26s ease;
+}
+
 .tarotx-card:hover {
   filter: drop-shadow(0 18px 26px rgba(19, 29, 52, 0.2));
 }
@@ -1659,10 +1667,6 @@ p {
 
 .tarotx-card.open {
   transform: translateX(var(--tx)) translateY(calc(var(--ty) - 38px)) rotate(0deg) scale(1.02);
-}
-
-.tarotx-card.collapsed {
-  transform: translateX(calc(var(--stack) * 2px - 8px)) translateY(102px) rotate(calc(var(--stack) * -1deg + 3deg)) scale(0.98);
 }
 
 .tarotx-card.dealing {

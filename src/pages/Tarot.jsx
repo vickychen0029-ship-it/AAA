@@ -103,20 +103,25 @@ function pickCards(seedText, count = 3) {
   return result
 }
 
-function cardPosition(index, total) {
-  const maxSpan = total >= 10 ? 292 : total >= 7 ? 286 : 278
-  const span = total > 1 ? Math.min(maxSpan, 72 + total * 24) : 0
-  const centerBias = total >= 10 ? 10 : 8
-  const x = total > 1 ? -span / 2 + (span / (total - 1)) * index + centerBias : centerBias
+function cardPosition(index, total, phase, pickOrder = -1) {
+  if (phase === 'focus' && pickOrder >= 0) {
+    const xMap = [-150, 0, 150]
+    const yMap = [18, 0, 18]
+    const rMap = [-5, 0, 5]
+    return { x: xMap[pickOrder], y: yMap[pickOrder], rotate: rMap[pickOrder] }
+  }
+
+  const span = total > 1 ? Math.min(620, 120 + total * 58) : 0
+  const x = total > 1 ? -span / 2 + (span / (total - 1)) * index : 0
   const yCurve = Math.abs(index - (total - 1) / 2)
-  const y = yCurve * 8
-  const rotate = (index - (total - 1) / 2) * 3.6
+  const y = yCurve * 3
+  const rotate = (index - (total - 1) / 2) * 0.8
   return { x, y, rotate }
 }
 
 export default function Tarot() {
   const [question, setQuestion] = useState('')
-  const [stage, setStage] = useState('idle') // idle | dealing | spread | collapsed
+  const [stage, setStage] = useState('idle') // idle | dealing | spread
   const [deckCards, setDeckCards] = useState([])
   const [revealedMap, setRevealedMap] = useState({})
   const [pickedIndices, setPickedIndices] = useState([])
@@ -133,6 +138,7 @@ export default function Tarot() {
     [pickedIndices, deckCards],
   )
   const allRevealed = selectedCards.length === 3
+  const phase = allRevealed ? 'focus' : 'select'
 
   useEffect(() => {
     return () => {
@@ -177,16 +183,6 @@ export default function Tarot() {
     const [past, now, future] = selectedCards
     return `过去位「${past.name}」提示你这件事的起因；现在位「${now.name}」说明当前主轴；未来位「${future.name}」给出后续趋势。`
   }, [selectedCards])
-
-  const toggleSpreadView = () => {
-    if (stage === 'spread') {
-      setStage('collapsed')
-      return
-    }
-    if (stage === 'collapsed') {
-      setStage('spread')
-    }
-  }
 
   useEffect(() => {
     let cancelled = false
@@ -304,11 +300,6 @@ export default function Tarot() {
             <span className="tarotx-stage-dot" />
             <span className="tarotx-stage-title">命盘感应牌阵</span>
             <span className="tarotx-stage-step">已选 {pickedIndices.length} / 3</span>
-            {stage !== 'idle' && (
-              <button type="button" className="tarotx-stage-toggle" onClick={toggleSpreadView}>
-                {stage === 'collapsed' ? '展开牌阵' : '收拢牌阵'}
-              </button>
-            )}
           </div>
           <div className="tarotx-question">
             <span className="tarotx-question-label">问题</span>
@@ -325,13 +316,15 @@ export default function Tarot() {
             {stage === 'dealing' && <div className="tarotx-dealing-badge">正在洗牌...</div>}
 
             {stage !== 'idle' &&
-              deckCards.map((card, idx) => {
-                const pos = cardPosition(idx, deckCards.length)
+              (allRevealed ? pickedIndices : deckCards.map((_, i) => i)).map((idx, visibleIdx, visibleArr) => {
+                const card = deckCards[idx]
+                if (!card) return null
                 const pickOrder = pickedIndices.indexOf(idx)
                 const isOpen = !!revealedMap[idx]
                 const isLocked = pickedIndices.length >= 3 && pickOrder === -1
                 const cardText = card.reversed ? card.reversed : card.upright
                 const art = getCardArt(card.key)
+                const pos = cardPosition(visibleIdx, visibleArr.length, phase, pickOrder)
                 return (
                   <button
                     key={card.key}
@@ -342,7 +335,7 @@ export default function Tarot() {
                       isOpen ? 'open' : '',
                       isLocked ? 'locked' : '',
                       stage === 'dealing' ? 'dealing' : '',
-                      stage === 'collapsed' ? 'collapsed' : '',
+                      phase === 'select' ? 'flat' : 'focus',
                     ]
                       .filter(Boolean)
                       .join(' ')}
