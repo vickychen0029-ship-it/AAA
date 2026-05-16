@@ -110,13 +110,16 @@ function cardPosition(index, total, phase, pickOrder = -1) {
     const rMap = [-5, 0, 5]
     return { x: xMap[pickOrder], y: yMap[pickOrder], rotate: rMap[pickOrder] }
   }
-
-  const span = total > 1 ? Math.min(620, 120 + total * 58) : 0
-  const x = total > 1 ? -span / 2 + (span / (total - 1)) * index : 0
-  const yCurve = Math.abs(index - (total - 1) / 2)
-  const y = yCurve * 3
-  const rotate = (index - (total - 1) / 2) * 0.8
-  return { x, y, rotate }
+  // selection phase: 5 cards per row, two-row layout when total=10
+  const cols = 5
+  const row = Math.floor(index / cols)
+  const rowStart = row * cols
+  const rowSize = Math.min(cols, total - rowStart)
+  const colInRow = index - rowStart
+  const x = (colInRow - (rowSize - 1) / 2) * 148
+  const rowCount = Math.ceil(total / cols)
+  const y = (row - (rowCount - 1) / 2) * 138
+  return { x, y, rotate: 0 }
 }
 
 export default function Tarot() {
@@ -239,7 +242,7 @@ export default function Tarot() {
   }, [allRevealed, selectedCards, question, aiRetryNonce])
 
   return (
-    <div className="page page-wide">
+    <div className="page page-wide tarotx-page">
       <div className="page-header">
         <h1>🃏 塔罗占卜</h1>
         <p>输入问题后抽取三张牌，按顺序点击翻开。</p>
