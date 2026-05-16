@@ -1552,7 +1552,7 @@ p {
 .tarotx-stage {
   margin-top: 12px;
   position: relative;
-  height: 430px;
+  height: 520px;
   border-radius: 14px;
   background:
     radial-gradient(circle at 20% 0%, rgba(94, 125, 244, 0.06), transparent 38%),
@@ -1634,8 +1634,8 @@ p {
   position: absolute;
   left: 50%;
   top: 84px;
-  width: 154px;
-  height: 252px;
+  width: 138px;
+  height: 236px;
   border: 0;
   background: transparent;
   transform: translateX(var(--tx)) translateY(var(--ty)) rotate(var(--rt));
@@ -1737,8 +1737,8 @@ p {
 
 .tarotx-face-front {
   transform: rotateY(180deg);
-  background: linear-gradient(180deg, #ffffff 0%, #f4f7ff 100%);
-  padding: 14px 12px;
+  background: linear-gradient(180deg, #fffdf7 0%, #f7f2e5 100%);
+  padding: 10px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1752,8 +1752,8 @@ p {
 
 .tarotx-front-position {
   font-size: 0.68rem;
-  color: #56608a;
-  background: #e9efff;
+  color: #7a6842;
+  background: #f6ebcd;
   border-radius: 999px;
   padding: 2px 8px;
   font-weight: 600;
@@ -1762,28 +1762,28 @@ p {
 .tarotx-front-orientation {
   margin-top: 4px;
   font-size: 0.74rem;
-  color: #6f7590;
+  color: #7f7158;
 }
 
 .tarotx-front-desc {
   margin-top: 10px;
-  font-size: 0.72rem;
-  line-height: 1.58;
-  color: #3d455d;
+  font-size: 0.7rem;
+  line-height: 1.52;
+  color: #5f5340;
 }
 
 .tarotx-illustration {
   margin-top: 8px;
   width: 100%;
-  border-radius: 10px;
-  border: 1px solid rgba(41, 57, 104, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(160, 130, 74, 0.46);
   background:
-    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.32) 0 18%, transparent 19%),
-    linear-gradient(155deg, var(--ill-a) 0%, var(--ill-b) 100%);
-  min-height: 130px;
-  padding: 8px 8px 10px;
-  color: #f8fbff;
-  box-shadow: inset 0 0 0 1px rgba(244, 248, 255, 0.16);
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.23) 0 18%, transparent 19%),
+    linear-gradient(155deg, #f7e8b6 0%, #e1c67f 100%);
+  min-height: 132px;
+  padding: 6px 6px 8px;
+  color: #5c4a2a;
+  box-shadow: inset 0 0 0 1px rgba(255, 250, 222, 0.56);
   position: relative;
   overflow: hidden;
 }
@@ -1792,7 +1792,7 @@ p {
   content: "";
   position: absolute;
   inset: 4px;
-  border: 1px solid rgba(246, 251, 255, 0.26);
+  border: 1px solid rgba(177, 141, 80, 0.4);
   border-radius: 8px;
 }
 
@@ -1801,29 +1801,51 @@ p {
   z-index: 1;
   display: flex;
   justify-content: space-between;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  opacity: 0.96;
+  opacity: 0.98;
+  color: #6f582f;
 }
 
-.tarotx-ill-symbol {
+.tarotx-ill-image-wrap {
   position: relative;
-  z-index: 1;
-  text-align: center;
-  margin-top: 12px;
-  font-size: 2.15rem;
-  text-shadow: 0 8px 20px rgba(19, 27, 53, 0.45);
+  margin-top: 5px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(153, 122, 67, 0.38);
+  background: rgba(255, 247, 227, 0.78);
+  height: 104px;
+}
+
+.tarotx-ill-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tarotx-ill-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  font-size: 2.1rem;
+  color: #72541f;
 }
 
 .tarotx-ill-footer {
   position: relative;
   z-index: 1;
   text-align: center;
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.54rem;
   letter-spacing: 0.18em;
-  opacity: 0.88;
+  opacity: 0.9;
+  color: #80673d;
 }
 
 .tarotx-reading {
@@ -1978,13 +2000,17 @@ p {
   }
 
   .tarotx-stage {
-    height: 390px;
+    height: 440px;
   }
 
   .tarotx-card {
-    width: 132px;
-    height: 218px;
+    width: 112px;
+    height: 192px;
     top: 106px;
+  }
+
+  .tarotx-ill-image-wrap {
+    height: 72px;
   }
 }
 

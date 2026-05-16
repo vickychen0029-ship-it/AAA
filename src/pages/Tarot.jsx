@@ -28,6 +28,30 @@ const TAROT_POOL = [
 
 const CARD_BACK = '✦'
 const POSITIONS = ['过去', '现在', '未来']
+const MAJOR_IMG_INDEX = {
+  fool: 0,
+  magician: 1,
+  'high-priestess': 2,
+  empress: 3,
+  emperor: 4,
+  hierophant: 5,
+  lovers: 6,
+  chariot: 7,
+  strength: 8,
+  hermit: 9,
+  wheel: 10,
+  justice: 11,
+  'hanged-man': 12,
+  death: 13,
+  temperance: 14,
+  devil: 15,
+  tower: 16,
+  star: 17,
+  moon: 18,
+  sun: 19,
+  judgement: 20,
+  world: 21,
+}
 const CARD_ART = {
   fool: { symbol: '⛰', title: '旅者', primary: '#4767d8', secondary: '#f4be59' },
   magician: { symbol: '✶', title: '意志', primary: '#5a54d6', secondary: '#d9a24c' },
@@ -57,6 +81,12 @@ function getCardArt(key) {
   return CARD_ART[key] || { symbol: '✦', title: '奥义', primary: '#3f5ea8', secondary: '#d7b983' }
 }
 
+function getCardImagePath(cardKey) {
+  const index = MAJOR_IMG_INDEX[cardKey]
+  if (typeof index !== 'number') return ''
+  return `/tarot/rws/m${String(index).padStart(2, '0')}.jpg`
+}
+
 function pickCards(seedText, count = 3) {
   const text = String(seedText || 'tarot')
   let hash = 0
@@ -74,11 +104,11 @@ function pickCards(seedText, count = 3) {
 }
 
 function cardPosition(index, total) {
-  const span = total > 1 ? 310 : 0
+  const span = total > 1 ? Math.min(520, 120 + total * 48) : 0
   const x = total > 1 ? -span / 2 + (span / (total - 1)) * index : 0
   const yCurve = Math.abs(index - (total - 1) / 2)
-  const y = yCurve * 18
-  const rotate = (index - (total - 1) / 2) * 10
+  const y = yCurve * 14
+  const rotate = (index - (total - 1) / 2) * 7
   return { x, y, rotate }
 }
 
@@ -93,6 +123,7 @@ export default function Tarot() {
   const [aiError, setAiError] = useState('')
   const [aiRequestedKey, setAiRequestedKey] = useState('')
   const [aiRetryNonce, setAiRetryNonce] = useState(0)
+  const [spreadSize, setSpreadSize] = useState(10)
   const timerRef = useRef(null)
 
   const selectedCards = useMemo(
@@ -116,7 +147,7 @@ export default function Tarot() {
   }
 
   const drawCards = () => {
-    const nextDeck = pickCards(question, 7)
+    const nextDeck = pickCards(question, spreadSize)
     setDeckCards(nextDeck)
     setRevealedMap({})
     setPickedIndices([])
@@ -229,6 +260,13 @@ export default function Tarot() {
               onChange={(e) => setQuestion(e.target.value)}
             />
           </div>
+          <div className="input-group">
+            <label>牌阵模式</label>
+            <select value={spreadSize} onChange={(e) => setSpreadSize(Number(e.target.value))}>
+              <option value={10}>10张牌阵（推荐）</option>
+              <option value={7}>7张牌阵</option>
+            </select>
+          </div>
           <button className="btn btn-primary btn-block" onClick={drawCards}>
             开始抽牌
           </button>
@@ -251,7 +289,7 @@ export default function Tarot() {
             重置
           </button>
           <div className="tarotx-tips">
-            <div>• 先展开 7 张牌，再选 3 张进行解读</div>
+            <div>• 先展开 {spreadSize} 张牌，再选 3 张进行解读</div>
             <div>• 选择顺序对应：过去 / 现在 / 未来</div>
             <div>• 每次提问都会生成新的牌阵</div>
           </div>
@@ -324,18 +362,25 @@ export default function Tarot() {
                       </div>
                       <div className={`tarotx-face tarotx-face-front ${card.reversed ? 'reversed' : ''}`}>
                         <div className="tarotx-front-position">{pickOrder !== -1 ? POSITIONS[pickOrder] : '未选'}</div>
-                        <div
-                          className="tarotx-illustration"
-                          style={{
-                            '--ill-a': art.primary,
-                            '--ill-b': art.secondary,
-                          }}
-                        >
+                        <div className="tarotx-illustration" style={{ '--ill-a': art.primary, '--ill-b': art.secondary }}>
                           <div className="tarotx-ill-header">
                             <span>{card.name}</span>
                             <span>{art.title}</span>
                           </div>
-                          <div className="tarotx-ill-symbol">{art.symbol}</div>
+                          <div className="tarotx-ill-image-wrap">
+                            <img
+                              src={getCardImagePath(card.key)}
+                              alt={card.name}
+                              className="tarotx-ill-image"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                                const fallback = e.currentTarget.nextElementSibling
+                                if (fallback) fallback.style.display = 'flex'
+                              }}
+                            />
+                            <div className="tarotx-ill-fallback">{art.symbol}</div>
+                          </div>
                           <div className="tarotx-ill-footer">{card.reversed ? 'REVERSED' : 'UPRIGHT'}</div>
                         </div>
                         <div className="tarotx-front-orientation">{card.reversed ? '逆位' : '正位'}</div>
