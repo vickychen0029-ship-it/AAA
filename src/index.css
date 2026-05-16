@@ -1844,6 +1844,18 @@ p {
   color: #b03f4b;
 }
 
+.tarotx-ai-retry {
+  margin-top: 10px;
+  border: 1px solid #dfe5f7;
+  background: #fff;
+  color: #4b5c96;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
 @keyframes tarotFanIn {
   from {
     opacity: 0;

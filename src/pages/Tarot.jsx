@@ -92,6 +92,7 @@ export default function Tarot() {
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState('')
   const [aiRequestedKey, setAiRequestedKey] = useState('')
+  const [aiRetryNonce, setAiRetryNonce] = useState(0)
   const timerRef = useRef(null)
 
   const selectedCards = useMemo(
@@ -123,6 +124,7 @@ export default function Tarot() {
     setAiError('')
     setAiLoading(false)
     setAiRequestedKey('')
+    setAiRetryNonce(0)
     setStage('dealing')
     scheduleStage('spread', 480)
   }
@@ -205,7 +207,7 @@ export default function Tarot() {
       cancelled = true
       if (watchdog) clearTimeout(watchdog)
     }
-  }, [allRevealed, selectedCards, question, aiLoading, aiReading, aiRequestedKey])
+  }, [allRevealed, selectedCards, question, aiLoading, aiReading, aiRequestedKey, aiRetryNonce])
 
   return (
     <div className="page page-wide">
@@ -242,6 +244,7 @@ export default function Tarot() {
               setAiError('')
               setAiLoading(false)
               setAiRequestedKey('')
+              setAiRetryNonce(0)
               setStage('idle')
             }}
           >
@@ -351,6 +354,20 @@ export default function Tarot() {
                 <div className="reading-card-content">{aiReading?.overall || summary}</div>
                 {aiLoading && <div className="tarotx-ai-hint">正在生成深度解析...</div>}
                 {!!aiError && <div className="tarotx-ai-error">{aiError}</div>}
+                {!aiLoading && (
+                  <button
+                    type="button"
+                    className="tarotx-ai-retry"
+                    onClick={() => {
+                      setAiReading(null)
+                      setAiError('')
+                      setAiRequestedKey('')
+                      setAiRetryNonce((n) => n + 1)
+                    }}
+                  >
+                    重试AI解析
+                  </button>
+                )}
               </div>
               <div className="grid-3">
                 {selectedCards.map((card, idx) => {
