@@ -155,6 +155,7 @@ export default function Tarot() {
 
   useEffect(() => {
     let cancelled = false
+    let watchdog = null
     const run = async () => {
       if (!allRevealed || selectedCards.length !== 3 || aiLoading || aiReading) return
       const requestKey = `${question}|${selectedCards.map((card) => `${card.key}:${card.reversed ? 'R' : 'U'}`).join('|')}`
@@ -162,6 +163,11 @@ export default function Tarot() {
       setAiRequestedKey(requestKey)
       setAiLoading(true)
       setAiError('')
+      watchdog = setTimeout(() => {
+        if (cancelled) return
+        setAiLoading(false)
+        setAiError('AI解析超时，已切换本地解读。')
+      }, 28000)
       try {
         const payload = {
           question: question || '',
@@ -187,12 +193,17 @@ export default function Tarot() {
           }
         }
       } finally {
+        if (watchdog) {
+          clearTimeout(watchdog)
+          watchdog = null
+        }
         if (!cancelled) setAiLoading(false)
       }
     }
     run()
     return () => {
       cancelled = true
+      if (watchdog) clearTimeout(watchdog)
     }
   }, [allRevealed, selectedCards, question, aiLoading, aiReading, aiRequestedKey])
 
