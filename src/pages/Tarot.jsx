@@ -104,13 +104,13 @@ function pickCards(seedText, count = 3) {
 }
 
 function cardPosition(index, total) {
-  const maxSpan = total >= 10 ? 336 : total >= 7 ? 318 : 300
-  const span = total > 1 ? Math.min(maxSpan, 86 + total * 30) : 0
-  const centerBias = total >= 10 ? 18 : 12
+  const maxSpan = total >= 10 ? 292 : total >= 7 ? 286 : 278
+  const span = total > 1 ? Math.min(maxSpan, 72 + total * 24) : 0
+  const centerBias = total >= 10 ? 10 : 8
   const x = total > 1 ? -span / 2 + (span / (total - 1)) * index + centerBias : centerBias
   const yCurve = Math.abs(index - (total - 1) / 2)
-  const y = yCurve * 10
-  const rotate = (index - (total - 1) / 2) * 4.4
+  const y = yCurve * 8
+  const rotate = (index - (total - 1) / 2) * 3.6
   return { x, y, rotate }
 }
 

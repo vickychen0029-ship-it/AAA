@@ -1634,9 +1634,9 @@ p {
   --delay: 0ms;
   position: absolute;
   left: 50%;
-  top: 92px;
-  width: 138px;
-  height: 236px;
+  top: 98px;
+  width: 130px;
+  height: 224px;
   border: 0;
   background: transparent;
   transform: translateX(var(--tx)) translateY(var(--ty)) rotate(var(--rt));
