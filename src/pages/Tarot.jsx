@@ -180,6 +180,8 @@ export default function Tarot() {
           const msg = err?.message || ''
           if (/not found|404/i.test(msg)) {
             setAiError('AI解析接口未就绪，已显示本地解读。请等待最新版本部署完成。')
+          } else if (/超时/.test(msg)) {
+            setAiError('AI解析超时，已切换本地解读。')
           } else {
             setAiError(msg || 'AI解析失败，已显示本地解读。')
           }

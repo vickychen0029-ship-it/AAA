@@ -5,6 +5,7 @@ export async function interpretTarot(payload) {
     return await apiRequest('/tarot/interpret', {
       method: 'POST',
       body: JSON.stringify(payload),
+      timeoutMs: 25000,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err || '')
@@ -12,6 +13,7 @@ export async function interpretTarot(payload) {
     return apiRequest('/ai-interview/tarot/interpret', {
       method: 'POST',
       body: JSON.stringify(payload),
+      timeoutMs: 25000,
     })
   }
 }

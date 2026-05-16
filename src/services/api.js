@@ -45,16 +45,29 @@ async function parseResponse(response) {
 
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem(TOKEN_KEY) || ''
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
+  const { timeoutMs = 25000, ...fetchOptions } = options
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const response = await fetch(`${API_BASE}${path}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(fetchOptions.headers || {}),
+      },
+      ...fetchOptions,
+      signal: controller.signal,
+    })
 
-  return parseResponse(response)
+    return parseResponse(response)
+  } catch (err) {
+    if (err && (err.name === 'AbortError' || /aborted/i.test(String(err)))) {
+      throw new Error('请求超时，请稍后重试')
+    }
+    throw err
+  } finally {
+    clearTimeout(timer)
+  }
 }
 
 export function getApiBaseUrl() {
