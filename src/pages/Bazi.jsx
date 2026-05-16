@@ -1043,21 +1043,9 @@ export default function Bazi() {
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: 20 }}>
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
-            日主：{bazi.dayMaster.stem}
-          </span>
-          {' · '}
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
-            {ELEMENT_COMMENTS[reading?.dayElement] || '命盘结构用于趋势参考，不替代现实决策。'}
-          </span>
-        </div>
       </div>
 
       <div className="card mt-24 bazi-precision-card">
-        <div style={{ padding: '10px 14px', borderBottom: '1px solid #eef1f6', background: '#fbfcff', fontSize: '0.76rem', color: '#6b7280' }}>
-          准确优先模式：当前仅展示已校验神煞集合
-        </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="bazi-precision-table">
             <thead>
@@ -1143,7 +1131,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>一、核心自我模块（专业展示 + 大白话翻译）</h3>
+        <h3 style={{ marginBottom: 12 }}>一、核心自我模块</h3>
         <div className="bazi-core-panel">
           <div className="bazi-core-pillars">
             {coreSelf.profession.map((item) => (
@@ -1199,7 +1187,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>二、先看结论（3条）</h3>
+        <h3 style={{ marginBottom: 12 }}>二、先看结论</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {interactive.conclusions.map((item) => (
             <div key={item} className="reading-card">
@@ -1210,7 +1198,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>三、四柱人生进度条（点击展开）</h3>
+        <h3 style={{ marginBottom: 12 }}>三、四柱人生进度条</h3>
         <div className="bazi-stack">
           {interactive.pillarDetails.map((item) => {
             const isOpen = openPillar === item.key
@@ -1238,7 +1226,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>四、神煞个性化标签（点击查看）</h3>
+        <h3 style={{ marginBottom: 12 }}>四、神煞个性化标签</h3>
         <div className="bazi-term-grid">
           {interactive.shenshaDetails.map((item) => {
             const isOpen = openShensha === item.tag
@@ -1264,7 +1252,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>五、地支藏干深层动能（点击查看）</h3>
+        <h3 style={{ marginBottom: 12 }}>五、地支藏干深层动能</h3>
         <div className="bazi-stack">
           {interactive.hiddenDynamics.map((item) => {
             const isOpen = openHidden === item.key
@@ -1295,7 +1283,7 @@ export default function Bazi() {
       </div>
 
       <div className="card mt-24">
-        <h3 style={{ marginBottom: 12 }}>六、全盘联动逻辑（汇总）</h3>
+        <h3 style={{ marginBottom: 12 }}>六、全盘联动逻辑</h3>
         <div className="reading-card">
           <div className="reading-card-title">你的命盘如何拼成一个完整的人</div>
           <div className="reading-card-content">{formatCardText(interactive.summary, readingMode, { conciseSentences: 2, conciseMaxChars: 150 })}</div>
@@ -1304,7 +1292,7 @@ export default function Bazi() {
 
       {reading && (
         <div className="card mt-24">
-          <h3 style={{ marginBottom: 12 }}>七、深度解读（按需展开）</h3>
+          <h3 style={{ marginBottom: 12 }}>七、深度解读</h3>
           {[
             { key: 'core', title: '核心矩阵（四柱、十神）', list: reading.coreMatrix },
             { key: 'state', title: '状态与能量（星运、自坐、空亡）', list: reading.stateEnergy },
