@@ -10,6 +10,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.charts import router as charts_router
 from app.api.routes.profiles import router as profiles_router
 from app.api.routes.reports import router as reports_router
+from app.api.routes.tarot import router as tarot_router
 from app.core.config import settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import setup_logging
@@ -43,6 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(charts_router)
     app.include_router(reports_router)
     app.include_router(ai_interview_router)
+    app.include_router(tarot_router)
 
     @app.on_event("startup")
     def create_tables_if_missing() -> None:
