@@ -238,7 +238,7 @@ export default function Tarot() {
       cancelled = true
       if (watchdog) clearTimeout(watchdog)
     }
-  }, [allRevealed, selectedCards, question, aiLoading, aiReading, aiRequestedKey, aiRetryNonce])
+  }, [allRevealed, selectedCards, question, aiRetryNonce])
 
   return (
     <div className="page page-wide">
