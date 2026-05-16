@@ -1553,7 +1553,7 @@ p {
   margin-top: 12px;
   position: relative;
   height: 520px;
-  padding-inline: 34px;
+  padding-inline: 56px 40px;
   border-radius: 14px;
   background:
     radial-gradient(circle at 20% 0%, rgba(94, 125, 244, 0.06), transparent 38%),
@@ -2002,7 +2002,7 @@ p {
 
   .tarotx-stage {
     height: 440px;
-    padding-inline: 18px;
+    padding-inline: 34px 24px;
   }
 
   .tarotx-card {
