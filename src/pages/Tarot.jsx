@@ -104,7 +104,7 @@ function pickCards(seedText, count = 3) {
 }
 
 function cardPosition(index, total, phase, pickOrder = -1) {
-  const shiftX = -54
+  const shiftX = -86
   if (phase === 'focus' && pickOrder >= 0) {
     const xMap = [-150, 0, 150]
     const yMap = [18, 0, 18]
