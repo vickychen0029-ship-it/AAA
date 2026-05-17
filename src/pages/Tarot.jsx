@@ -201,7 +201,7 @@ export default function Tarot() {
       watchdog = setTimeout(() => {
         if (cancelled) return
         setAiLoading(false)
-        setAiError('AI解析超时，已切换本地解读。')
+        setAiError('深度解析超时，已切换本地解读。')
       }, 28000)
       try {
         const payload = {
@@ -220,11 +220,11 @@ export default function Tarot() {
         if (!cancelled) {
           const msg = err?.message || ''
           if (/not found|404/i.test(msg)) {
-            setAiError('AI解析接口未就绪，已显示本地解读。请等待最新版本部署完成。')
+            setAiError('深度解析接口未就绪，已显示本地解读。请等待最新版本部署完成。')
           } else if (/超时/.test(msg)) {
-            setAiError('AI解析超时，已切换本地解读。')
+            setAiError('深度解析超时，已切换本地解读。')
           } else {
-            setAiError(msg || 'AI解析失败，已显示本地解读。')
+            setAiError(msg || '深度解析失败，已显示本地解读。')
           }
         }
       } finally {
@@ -409,7 +409,7 @@ export default function Tarot() {
                       setAiRetryNonce((n) => n + 1)
                     }}
                   >
-                    重试AI解析
+                    重试深度解析
                   </button>
                 )}
               </div>
