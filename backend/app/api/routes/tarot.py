@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.api.deps import get_current_user
 from app.models.user import User
@@ -14,10 +14,18 @@ router = APIRouter(tags=["tarot"])
 
 
 @router.post("/tarot/interpret", response_model=TarotInterpretResponse)
-def interpret_tarot(
-    payload: dict[str, Any] = Body(default_factory=dict),
+async def interpret_tarot(
+    request: Request,
     _: User = Depends(get_current_user),
 ) -> TarotInterpretResponse:
+    payload: dict[str, Any] = {}
+    try:
+        raw_payload = await request.json()
+        if isinstance(raw_payload, dict):
+            payload = raw_payload
+    except Exception:
+        payload = {}
+
     raw_cards = payload.get("cards") if isinstance(payload, dict) else None
     question = str((payload or {}).get("question", "")).strip() if isinstance(payload, dict) else ""
     positions = ["过去", "现在", "未来"]
@@ -58,8 +66,8 @@ def interpret_tarot(
 
 
 @router.post("/ai-interview/tarot/interpret", response_model=TarotInterpretResponse)
-def interpret_tarot_legacy_path(
-    payload: dict[str, Any] = Body(default_factory=dict),
+async def interpret_tarot_legacy_path(
+    request: Request,
     user: User = Depends(get_current_user),
 ) -> TarotInterpretResponse:
-    return interpret_tarot(payload, user)
+    return await interpret_tarot(request, user)

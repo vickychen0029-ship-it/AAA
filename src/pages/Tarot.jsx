@@ -394,7 +394,7 @@ export default function Tarot() {
           {allRevealed && (
             <div className="tarotx-reading">
               <div className="reading-card">
-                <div className="reading-card-title">整体结论</div>
+                <div className="reading-card-title">深度解析</div>
                 <div className="reading-card-content">{aiReading?.overall || summary}</div>
                 {aiLoading && <div className="tarotx-ai-hint">正在生成深度解析...</div>}
                 {!!aiError && <div className="tarotx-ai-error">{aiError}</div>}
