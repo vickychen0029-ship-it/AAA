@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from fastapi import APIRouter, Depends, Request
@@ -13,7 +14,22 @@ from app.services.tarot_reading import build_tarot_reading
 router = APIRouter(tags=["tarot"])
 
 
-@router.post("/tarot/interpret", response_model=TarotInterpretResponse)
+def _extract_payload_from_query(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+    question = str(request.query_params.get("question", "") or "").strip()
+    cards_raw = str(request.query_params.get("cards", "") or "").strip()
+    if question:
+        payload["question"] = question
+    if cards_raw:
+        try:
+            parsed = json.loads(cards_raw)
+            if isinstance(parsed, list):
+                payload["cards"] = parsed
+        except Exception:
+            pass
+    return payload
+
+
+@router.api_route("/tarot/interpret", methods=["POST", "GET"], response_model=TarotInterpretResponse)
 async def interpret_tarot(
     request: Request,
     _: User = Depends(get_current_user),
@@ -25,6 +41,8 @@ async def interpret_tarot(
             payload = raw_payload
     except Exception:
         payload = {}
+    if request.method == "GET":
+        payload = _extract_payload_from_query(payload, request)
 
     raw_cards = payload.get("cards") if isinstance(payload, dict) else None
     question = str((payload or {}).get("question", "")).strip() if isinstance(payload, dict) else ""
@@ -65,7 +83,7 @@ async def interpret_tarot(
     return TarotInterpretResponse(**result)
 
 
-@router.post("/ai-interview/tarot/interpret", response_model=TarotInterpretResponse)
+@router.api_route("/ai-interview/tarot/interpret", methods=["POST", "GET"], response_model=TarotInterpretResponse)
 async def interpret_tarot_legacy_path(
     request: Request,
     user: User = Depends(get_current_user),
