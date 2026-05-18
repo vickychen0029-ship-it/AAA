@@ -92,6 +92,7 @@ def build_tarot_reading(question: str, cards: list[dict[str, str]]) -> dict[str,
             temperature=0.6,
             max_tokens=1400,
             force_json=True,
+            timeout_seconds=12,
         )
         parsed = json.loads(result.content)
         overall = _trim_text(str(parsed.get("overall", "")).strip(), min_len=60, max_len=180)
