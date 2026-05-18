@@ -400,7 +400,7 @@ export default function Tarot() {
                 <div className="reading-card-content">{aiReading?.overall || summary}</div>
                 {aiLoading && <div className="tarotx-ai-hint">正在生成深度解析...</div>}
                 {!!aiError && <div className="tarotx-ai-error">{aiError}</div>}
-                {!aiLoading && !!aiError && (
+                {!aiLoading && (
                   <button
                     type="button"
                     className="tarotx-ai-retry"
